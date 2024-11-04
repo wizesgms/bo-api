@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('agent_balance_history.page_title') }) -%>
+
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('agent_balance_history.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <div class="card-header flex justify-between items-center">
+                                            <div style="font-size: 14px">
+                                                <span><%= __('agent_balance_history.table_title') %></span>
+                                                <span id="agent-balance-history-count">(0)</span>
+                                            </div>
+                                            <div class="flex flex-col sm:flex-row items-center">
+                                                <div class="mr-2">
+                                                    <select onchange="drawTable()" class="min-width border" id="agent-balance-history-select"></select>
+                                                </div>
+                                                <input data-daterange="true" id="agent-money-balance-period" class="datepicker input w-56 border block mr-2" />
+                                                <button onclick="drawTable()" class="button flex items-center justify-center border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10">
+                                                    <i data-feather="search" class="w-4 h-4 mr-2"></i>
+                                                    <%= __('agent_balance_history.search') %>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+
+                                        <div class="card-body">
+                                            <div class="col-sm-12">
+                                                <div class="table-scrollable">
+                                                    <div class="table-responsive">
+                                                        <table id="agent-balance-history-datatable" class="table table-striped table-bordered"></table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            $("#menu-2").addClass("side-menu--active");
+            $("#menu-2 + ul").addClass("side-menu__sub-open");
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+
+            const startDate = moment(new Date(year, month, 1)).format("YYYY/MM/DD");
+            const endDate = moment(new Date(year, month + 1, 0)).format("YYYY/MM/DD");
+            const initialDate = `${startDate} - ${endDate}`;
+
+            $("#agent-money-balance-period").val(initialDate);
+
+            let sessionAuthId = `<%= session.auth.id %>`;
+            let agentBalanceHistoryTable;
+
+            function getAgentsFunc() {
+                $.ajax({
+                    type: "get",
+                    url: `/api/agent/child/${sessionAuthId}`,
+                    data: {},
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status == 1) {
+                            let optionStr = "";
+                            const data = res.child;
+
+                            optionStr += "<option value='all'><%= __('agent_balance_history.all_agent') %></option>";
+
+                            for (let i = 0; i < data.length; i++) {
+                                optionStr += `<option value='${data[i].agentCode}'>${data[i].agentCode}</option>`;
+                            }
+
+                            $("#agent-balance-history-select").html(optionStr);
+                            tail.select("#agent-balance-history-select", { search: true, width: 160, locale: "<%= session.locale %>" });
+                            showToast;
+                            drawTable();
+                        }
+                    },
+                });
+            }
+
+            function drawTable() {
+                if (agentBalanceHistoryTable) {
+                    agentBalanceHistoryTable.ajax.reload();
+                } else {
+                    agentBalanceHistoryTable = $("#agent-balance-history-datatable").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[4, "desc"]],
+                        columns: [
+                            { title: "<%= __('agent_balance_history.table.no') %>", data: "no", width: "60px", orderable: false },
+                            { title: "<%= __('agent_balance_history.table.agent_code') %>", data: "agentCode" },
+                            { title: "<%= __('agent_balance_history.table.agent_balance') %>", data: "agentBalance" },
+                            { title: "<%= __('agent_balance_history.table.comment') %>", data: "comment" },
+                            { title: "<%= __('agent_balance_history.table.created_at') %>", data: "createdAt", width: "160px" },
+                        ],
+                        ajax: {
+                            url: "/api/agent_balance_progress",
+                            type: "GET",
+                            data: function (data) {
+                                data.agentCode = $("#agent-balance-history-select").val();
+                                data.startDate = $("#agent-money-balance-period").val().split(" - ")[0];
+                                data.endDate = $("#agent-money-balance-period").val().split(" - ")[1];
+
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.status == 1) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].agentCode = convertString(res.data[i].agentCode, 30);
+                                        res.data[i].agentBalance = convertNumber(res.data[i].agentBalance);
+                                        res.data[i].comment = convertString(res.data[i].comment, 150);
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt);
+                                    }
+
+                                    $("#agent-balance-history-count").html(`(${res.recordsTotal})`);
+                                }
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            getAgentsFunc();
+        </script>
+    </body>
+</html>

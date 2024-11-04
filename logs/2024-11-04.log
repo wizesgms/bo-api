@@ -1,0 +1,104 @@
+2024-11-04 08:59:43 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 08:59:43 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 08:59:44 info: [ Database ]: Updating database...
+2024-11-04 08:59:44 info: [ Loaded ]: Database config
+2024-11-04 08:59:44 info: [ Loaded ]: Express config
+2024-11-04 08:59:44 info: [ Server ]: Server is started on 5006 port
+2024-11-04 09:03:18 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 09:03:18 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 09:03:19 info: [ Database ]: Updating database...
+2024-11-04 09:03:19 info: [ Loaded ]: Database config
+2024-11-04 09:03:19 info: [ Loaded ]: Express config
+2024-11-04 09:03:19 info: [ Server ]: Server is started on 5006 port
+2024-11-04 09:03:55 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 09:03:55 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 09:03:56 info: [ Database ]: Updating database...
+2024-11-04 09:03:56 info: [ Loaded ]: Database config
+2024-11-04 09:03:56 info: [ Loaded ]: Express config
+2024-11-04 09:03:56 info: [ Server ]: Server is started on 5006 port
+2024-11-04 09:06:55 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:10:49 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:10:56 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:11:02 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:13:49 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:13:55 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:14:43 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:15:40 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:15:56 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:15:59 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:16:00 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:16:03 error: [ API | Agent | Get Agents By Tree ]: (admin)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:16:35 error: [ API | Agent | Get Agents By Tree ]: (leikzsss)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:17:09 error: [ API | Agent | Get Agents By Tree ]: (leikzsss)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:17:11 error: [ API | Agent | Get Agents By Tree ]: (leikzsss)  Unknown column 'Agent.role' in 'where clause'
+2024-11-04 09:22:19 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 09:22:19 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 09:22:19 error: [ Database ]: Database connect failed... Invalid default value for 'token'
+2024-11-04 09:22:58 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 09:22:58 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 09:22:59 info: [ Database ]: Updating database...
+2024-11-04 09:22:59 info: [ Loaded ]: Database config
+2024-11-04 09:22:59 info: [ Loaded ]: Express config
+2024-11-04 09:22:59 info: [ Server ]: Server is started on 5006 port
+2024-11-04 09:26:55 error: [ Validation ]: (test123)  url: /api/agent, "currency" is not allowed to be empty
+2024-11-04 09:27:03 error: [ Validation ]: (test123)  url: /api/agent, "currency" is not allowed to be empty
+2024-11-04 09:27:16 error: [ Validation ]: (test123)  url: /api/agent, "currency" is not allowed to be empty
+2024-11-04 09:27:19 error: [ Validation ]: (test123)  url: /api/agent, "currency" is not allowed to be empty
+2024-11-04 09:27:32 error: [ Validation ]: (test123)  url: /api/agent, "currency" is not allowed to be empty
+2024-11-04 09:36:41 error: [ API | Agent | Get Currencies ]: (test123)  Unexpected token 'I', "IDR" is not valid JSON
+2024-11-04 09:36:42 error: [ API | Agent | Get Currencies ]: (test123)  Unexpected token 'I', "IDR" is not valid JSON
+2024-11-04 09:36:43 error: [ API | Agent | Get Currencies ]: (test123)  Unexpected token 'I', "IDR" is not valid JSON
+2024-11-04 09:36:44 error: [ API | Agent | Get Currencies ]: (test123)  Unexpected token 'I', "IDR" is not valid JSON
+2024-11-04 09:38:14 error: [ API | Agent | Get Currencies ]: (test123)  Unexpected token '$', "$" is not valid JSON
+2024-11-04 09:38:15 error: [ API | Agent | Get Currencies ]: (test123)  Unexpected token '$', "$" is not valid JSON
+2024-11-04 09:39:14 error: [ API | Agent | Get Currencies ]: (test123)  Unexpected non-whitespace character after JSON at position 1 (line 1 column 2)
+2024-11-04 09:40:56 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:40:57 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:03 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:11 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:15 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:25 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:29 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:33 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:35 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:37 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:39 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:46 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:41:54 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 09:42:15 error: [ API | Agent | Create Agent ]: (test123)  Data too long for column 'depth' at row 1
+2024-11-04 10:21:09 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 10:21:09 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 10:21:09 info: [ Database ]: Updating database...
+2024-11-04 10:21:09 info: [ Loaded ]: Database config
+2024-11-04 10:21:09 info: [ Loaded ]: Express config
+2024-11-04 10:21:09 info: [ Server ]: Server is started on 5006 port
+2024-11-04 10:33:00 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 10:33:00 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 10:33:00 info: [ Database ]: Updating database...
+2024-11-04 10:33:00 info: [ Loaded ]: Database config
+2024-11-04 10:33:00 info: [ Loaded ]: Express config
+2024-11-04 10:33:00 info: [ Server ]: Server is started on 5006 port
+2024-11-04 10:57:06 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 10:57:06 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 10:57:06 info: [ Database ]: Updating database...
+2024-11-04 10:57:06 info: [ Loaded ]: Database config
+2024-11-04 10:57:07 info: [ Loaded ]: Express config
+2024-11-04 10:57:07 info: [ Server ]: Server is started on 5006 port
+2024-11-04 10:57:36 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 10:57:36 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 10:57:36 info: [ Database ]: Updating database...
+2024-11-04 10:57:36 info: [ Loaded ]: Database config
+2024-11-04 10:57:37 info: [ Loaded ]: Express config
+2024-11-04 10:57:37 info: [ Server ]: Server is started on 5006 port
+2024-11-04 11:58:57 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 11:58:57 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 11:58:57 info: [ Database ]: Updating database...
+2024-11-04 11:58:57 info: [ Loaded ]: Database config
+2024-11-04 11:58:58 info: [ Loaded ]: Express config
+2024-11-04 11:58:58 info: [ Server ]: Server is started on 5006 port
+2024-11-04 12:24:09 info: [ Database ]: Database (fiverscan) creating...
+2024-11-04 12:24:09 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-04 12:24:09 info: [ Database ]: Updating database...
+2024-11-04 12:24:09 info: [ Loaded ]: Database config
+2024-11-04 12:24:09 info: [ Loaded ]: Express config
+2024-11-04 12:24:09 info: [ Server ]: Server is started on 5006 port

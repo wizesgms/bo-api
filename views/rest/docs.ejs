@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('docs.page_title') }) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('docs.title') %></h2>
+                            </div>
+
+                            <div class="mt-2 grid grid-cols-12 gap-6">
+                                <div class="col-span-12 xl:col-span-8 sm:col-span-12 intro-y box p-5">
+                                    <div class="accordion">
+                                        <div>
+                                            <span style="font-size: 14px" id="trans-title"><%= __('docs.api_list.title') %></span>
+                                            <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                            <div class="mb-5">
+                                                <div class="ml-2 mr-2 pt-5 flex items-center justify-between">
+                                                    <%= __('docs.label.api_endpoint') %>:
+                                                    <input  value="<%= process.env.AAS_ENDPOINT %>" class="aas_endpoint input w-full border ml-8 flex-1" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 mb-2 agent-level-1">Transfer API ( Gold API )</div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">1. <%= __('docs.list_label.new_user_create') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#create-user"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="create-user">
+    {
+        "method": "user_create",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test"
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS"
+        "user_code": "test",
+        "user_balance": 0,
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "DUPLICATED_USER"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">2. <%= __('docs.list_label.deposit_user_money') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#add-balance"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="add-balance">
+    {
+        "method": "user_deposit",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test",
+        "amount": 10000
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1, 
+        "msg": "SUCCESS",
+        "agent_balance": 990000,
+        "user_balance": 10000
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INSUFFICIENT_AGENT_FUNDS"
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">3. <%= __('docs.list_label.withdraw_user_money') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#sub-balance"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="sub-balance">
+    {
+        "method": "user_withdraw",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test",
+        "amount": 10000
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS"
+        "agent_balance": 100000,
+        "user_balance": 10000
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INSUFFICIENT_USER_FUNDS" 
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">4. <%= __('docs.list_label.reset_user_money') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#reset-balance"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="reset-balance">
+    {
+        "method": "user_withdraw_reset",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test"
+    }
+
+</code>
+
+
+
+
+
+
+<code id="sub-balance">
+    {
+        "method": "user_withdraw_reset",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "all_users": true 
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1000000,
+        },
+        "user": {
+            "user_code": "test",
+            "withdraw_amount": 5600,
+            "balance": 0
+        }
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1076850
+        },
+        "user_list": [
+            {
+                "user_code": "test",
+                "withdraw_amount": 20000,
+                "balance": 0
+            },
+            {
+                "user_code": "test2",
+                "withdraw_amount": 56850,
+                "balance": 0
+            }
+        ]
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INVALID_PARAMETER"
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">5. <%= __('docs.list_label.run_game') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#slot-game-launch-transfer"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="slot-game-launch-transfer">
+    {
+        "method": "game_launch",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test",
+        "provider_code": "PRAGMATIC",
+        "game_code": "vs20doghouse",
+        "lang": "en"
+    }
+
+</code>
+<code id="live-game-launch-transfer">
+    {
+        "method": "game_launch",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test",
+        "provider_code": "EVOLUTION",
+        "game_code": "nxpkul2hgclallno", // Optional - When it is empty, lobby url is returned.
+        "lang": "en"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "launch_url": "http://kgame-tw1.pplaygame.net/..."
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INVALID_PROVIDER"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">
+                                                6. <%= __('docs.list_label.info_balance_agent_user') %>
+                                            </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#agent-user-info"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="agent-user-info">
+    // <%= __('docs.list_label.info_balance_agent_user_description') %>
+    {
+        "method": "money_info",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>"
+    }
+
+</code>
+
+
+
+<code id="agent-user-info">
+    {
+        "method": "money_info",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test"
+    }
+
+</code>
+
+
+
+
+<code id="agent-user-info">
+    {
+        "method": "money_info",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "all_users": true 
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1000000,
+        }
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1000000,
+        },
+        "user": {
+            "user_code": "test",
+            "balance": 100000,
+        }
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "chmng2",
+            "balance": 99550000
+        },
+        "user_list": [
+            {
+                "user_code": "test",
+                "balance": 450000
+            },
+            {
+                "user_code": "test2",
+                "balance": 20000
+            }
+        ]
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INVALID_PARAMETER"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">7. <%= __('docs.list_label.provider') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#slot-provider-list"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="slot-provider-list">
+    {
+        "method": "provider_list",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>"
+    }
+
+</code>
+
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "providers": [
+            {
+                "code": "PRAGMATIC",
+                "name": "Pragmatic Play",
+                "status": 1 // 1: open, 0: maintenancing
+            },
+            ...
+        ]
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INTERNAL_ERROR"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">
+                                                8. <%= __('docs.list_label.game_list') %>
+                                            </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>: 
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#slot-game-list"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="slot-game-list">
+    {
+        "method": "game_list",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "provider_code": "PRAGMATIC"
+    }
+
+</code>
+<code id="slot-provider-list">
+    "PRAGMATIC","REELKINGDOM","HABANERO",
+    "BOOONGO","PLAYSON","CQ9","DREAMTECH","EVOPLAY",
+    "TOPTREND","PGSOFT", "GENESIS", "EVOLUTION", "EZUGI"
+    
+</code>
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "games": [
+            {
+                "game_code": "vs20doghouse",
+                "game_name": "The Dog House",
+                "banner": "https://.../vs20doghouse.png",
+                "status": 1 // open
+            },
+            {
+                "game_code": "vs243mwarrior",
+                "game_name": "Monkey Warrior",
+                "banner": "https://.../vs243mwarrior.png",
+                "status": 0 // maintenancing
+            }
+        ]
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INTERNAL_ERROR"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">9. <%= __('docs.list_label.bet_history') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>: 
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#get-slot-game-history"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="get-slot-game-history">
+    {
+        "method": "get_game_log",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test",
+        "game_type": "slot",
+        "start": "2022-09-29 00:00:00",
+        "end": "2022-09-30 23:59:00",
+        "page": 0,
+        "perPage": 1000
+    }
+
+
+</code>
+
+<code>
+    <%= __('docs.ref_panel.1') %>
+
+    - "debit" // <%= __('docs.ref_panel.2') %>
+        "txn_type": "debit"
+        "bet": 2000   // <%= __('docs.ref_panel.5') %>
+        "win": 0      // <%= __('docs.ref_panel.4') %>
+        "txn_id": "64a83..."
+
+    - "credit" // <%= __('docs.ref_panel.3') %>
+        "txn_type": "credit"
+        "bet": 0     // <%= __('docs.ref_panel.4') %>
+        "win": 1500  // <%= __('docs.ref_panel.5') %>
+        "txn_id": "64a83..."
+
+    - "debit_credit"// <%= __('docs.ref_panel.6') %>
+        "txn_type": "debit_credit"
+        "bet": 2000  // <%= __('docs.ref_panel.5') %>
+        "win": 1500  // <%= __('docs.ref_panel.5') %>
+
+</code>
+                                                        </pre>
+
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>
+    {
+        "status": 1,
+        "total_count": 112,
+        "page": 0,
+        "perPage": 10,
+        "slot": [
+            {
+                "history_id": 245,
+                "agent_code": "<%= session.auth.agentCode %>",
+                "user_code": "test",
+                "provider_code": "PRAGMATIC",
+                "game_code": "vs20doghouse",
+                "type": "BASE",
+                "bet_money": 2000,
+                "win_money": 0,
+                "txn_id": "64a83f2fc597acc9004eec52c3f84c30",
+                "txn_type": "debit_credit",
+                "user_start_balance": 1741708,
+                "user_end_balance": 1739708,
+                "agent_start_balance": 98981676,
+                "agent_end_balance": 98981676,
+                "created_at": "2022-09-29T12:50:42.000Z"
+            },
+            ...
+        ]
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "error": "INVALID_PARAMETER"
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <% if(process.env.CALL_API == "true") { %>
+                                        <%- include('./docs_call.ejs') -%>
+                                        <% } %>
+                                    </div>
+                                </div>
+
+                                <div class="col-span-12 xl:col-span-4 sm:col-span-12 intro-y box p-5">
+
+                                    <div>
+                                        <span style="font-size: 14px" id="trans-title"><%= __('docs.message_table.title') %></span>
+                                        <div class="w-full border-t api_doc dark:border-dark-5 mt-3"></div>
+                                    </div>
+
+                                    <div class="overflow-x-auto">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border border-b-2 dark:border-dark-5 whitespace-no-wrap"><%= __('docs.message_table.error_message') %></th>
+                                                    <th class="border border-b-2 dark:border-dark-5 whitespace-no-wrap"><%= __('docs.message_table.description') %></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="border">INVALID_METHOD</td>
+                                                    <td class="border"><%= __('docs.message_table.invalid_method') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">INVALID_PARAMETER</td>
+                                                    <td class="border"><%= __('docs.message_table.invalid_parameter') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">INVALID_AGENT</td>
+                                                    <td class="border"><%= __('docs.message_table.invalid_agent') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">INVALID_AGENT_ROLE</td>
+                                                    <td class="border"><%= __('docs.message_table.invalid_agent_role') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">BLOCKED_AGENT</td>
+                                                    <td class="border"><%= __('docs.message_table.blocked_agent') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">INVALID_USER</td>
+                                                    <td class="border"><%= __('docs.message_table.invalid_user') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">INSUFFICIENT_AGENT_FUNDS</td>
+                                                    <td class="border"><%= __('docs.message_table.insufficient_agent_funds') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">INSUFFICIENT_USER_FUNDS</td>
+                                                    <td class="border"><%= __('docs.message_table.insufficient_user_funds') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">DUPLICATED_USER</td>
+                                                    <td class="border"><%= __('docs.message_table.duplicated_user') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">INVALID_PROVIDER</td>
+                                                    <td class="border"><%= __('docs.message_table.invalid_provider') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">INTERNAL_ERROR</td>
+                                                    <td class="border"><%= __('docs.message_table.internal_error') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">EXTERNAL_ERROR</td>
+                                                    <td class="border"><%= __('docs.message_table.external_error') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">API_CHECKING</td>
+                                                    <td class="border"><%= __('docs.message_table.api_checking') %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border">AGENT_SEAMLESS</td>
+                                                    <td class="border"><%= __('docs.message_table.agent_seamless') %></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div>
+                                        <span style="font-size: 14px" id="trans-title">PHP Sample</span>
+                                        <div class="w-full border-t api_doc dark:border-dark-5 mt-3"></div>
+                                    </div>
+
+
+                                    <div class="col-span-12 sm:col-span-6">
+                                        <pre style="margin-top: 5px;">
+<code>
+    $postArray = [
+        'method' => 'money_info', 
+        'agent_code' => '<%= session.auth.agentCode %>', 
+        'agent_token' => '<%= session.auth.token %>'
+    ];
+    $jsonData = json_encode($postArray);
+
+    $headerArray = ['Content-Type: application/json'];
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, '<%= process.env.AAS_ENDPOINT %>');
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headerArray);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+
+    $res=curl_exec($ch);
+    curl_close($ch);
+    
+</code>
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            new ClipboardJS(".btn");
+            let clipboard = new ClipboardJS(".btn");
+
+            clipboard.on("SUCCESS", function (e) {
+                showToast("SUCCESS", "<%= __('docs.copy_success') %>");
+                e.clearSelection();
+            });
+
+            clipboard.on("error", function (e) {
+                showToast("error", "<%= __('common.copy_error') %>");
+            });
+        </script>
+    </body>
+</html>

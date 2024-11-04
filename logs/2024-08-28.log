@@ -1,0 +1,41 @@
+2024-08-28 14:50:13 error: [ Database ]: Database creating failed... Access denied for user 'root'@'localhost' (using password: YES)
+2024-08-28 14:51:49 error: [ Database ]: Database creating failed... Access denied for user 'root'@'localhost' (using password: YES)
+2024-08-28 14:54:40 error: [ Database ]: Database creating failed... Access denied for user 'root'@'localhost' (using password: YES)
+2024-08-28 14:55:18 error: [ Database ]: Database creating failed... Access denied for user 'root'@'localhost' (using password: YES)
+2024-08-28 14:56:33 error: [ Database ]: Database creating failed... Access denied for user 'root'@'localhost' (using password: YES)
+2024-08-28 15:01:49 info: [ Database ]: Database (nexus) creating...
+2024-08-28 15:01:49 warn: [ Database ]: Database already exists. (nexus)
+2024-08-28 15:01:50 info: [ Database ]: Updating database...
+2024-08-28 15:01:50 info: [ Loaded ]: Database config
+2024-08-28 15:01:50 info: [ Loaded ]: Express config
+2024-08-28 15:01:50 info: [ Server ]: Server is started on 5006 port
+2024-08-28 15:12:13 info: [ Database ]: Database (nexus) creating...
+2024-08-28 15:12:13 warn: [ Database ]: Database already exists. (nexus)
+2024-08-28 15:12:13 info: [ Database ]: Updating database...
+2024-08-28 15:12:13 info: [ Loaded ]: Database config
+2024-08-28 15:12:13 info: [ Loaded ]: Express config
+2024-08-28 15:12:13 info: [ Server ]: Server is started on 5006 port
+2024-08-28 15:19:45 info: [ Database ]: Database (nexus) creating...
+2024-08-28 15:19:45 warn: [ Database ]: Database already exists. (nexus)
+2024-08-28 15:19:45 info: [ Database ]: Updating database...
+2024-08-28 15:19:45 info: [ Loaded ]: Database config
+2024-08-28 15:19:45 info: [ Loaded ]: Express config
+2024-08-28 15:19:45 info: [ Server ]: Server is started on 5006 port
+2024-08-28 15:21:13 info: [ Database ]: Database (nexus) creating...
+2024-08-28 15:21:13 warn: [ Database ]: Database already exists. (nexus)
+2024-08-28 15:21:13 info: [ Database ]: Updating database...
+2024-08-28 15:21:13 info: [ Loaded ]: Database config
+2024-08-28 15:21:13 info: [ Loaded ]: Express config
+2024-08-28 15:21:13 info: [ Server ]: Server is started on 5006 port
+2024-08-28 15:23:18 info: [ Database ]: Database (nexus) creating...
+2024-08-28 15:23:18 warn: [ Database ]: Database already exists. (nexus)
+2024-08-28 15:23:18 info: [ Database ]: Updating database...
+2024-08-28 15:23:18 info: [ Loaded ]: Database config
+2024-08-28 15:23:18 info: [ Loaded ]: Express config
+2024-08-28 15:23:18 info: [ Server ]: Server is started on 5006 port
+2024-08-28 15:24:20 info: [ Database ]: Database (nexus) creating...
+2024-08-28 15:24:20 warn: [ Database ]: Database already exists. (nexus)
+2024-08-28 15:24:20 info: [ Database ]: Updating database...
+2024-08-28 15:24:20 info: [ Loaded ]: Database config
+2024-08-28 15:24:21 info: [ Loaded ]: Express config
+2024-08-28 15:24:21 info: [ Server ]: Server is started on 5006 port

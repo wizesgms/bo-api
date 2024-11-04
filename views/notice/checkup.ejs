@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('checkup.page_title') }) -%>
+
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('checkup.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div>
+                                    <div class="col-12">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <div class="card-header flex justify-between items-center">
+                                                    <div style="font-size: 14px">
+                                                        <span><%= __('checkup.table_title') %></span>
+                                                        <span id="checkup-count">(0)</span>
+                                                    </div>
+                                                    <button id="new-checkup-btn" class="button flex items-center justify-center bg-theme-1 text-white">
+                                                        <i data-feather="plus-circle" class="w-4 h-4 mr-2"></i> <%= __('checkup.creat_new_check') %>
+                                                    </button>
+                                                </div>
+                                                <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                                <div class="card-body">
+                                                    <div>
+                                                        <div class="col-sm-12">
+                                                            <div class="table-scrollable">
+                                                                <div class="table-responsive">
+                                                                    <table id="checkup-datatable" class="table table-striped table-bordered"></table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- new checkup modal -->
+                                <div class="modal" id="new-checkup-modal">
+                                    <div class="modal__content">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto"><%= __('checkup.new_modal.title') %></h2>
+                                        </div>
+                                        <form id="new-checkup-form">
+                                            <div class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                                <div class="col-span-6 sm:col-span-6">
+                                                    <label><%= __('checkup.new_modal.check_start_date') %></label>
+                                                    <input type="datetime-local" id="start-date" class="input w-full border mt-2 flex-1" />
+                                                </div>
+
+                                                <div class="col-span-6 sm:col-span-6">
+                                                    <label><%= __('checkup.new_modal.check_end_date') %></label>
+                                                    <input type="datetime-local" id="end-date" class="input w-full border mt-2 flex-1" />
+                                                </div>
+
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('checkup.new_modal.check_content') %></label>
+                                                    <textarea
+                                                        id="new-checkup-content"
+                                                        placeholder=""
+                                                        class="input w-full border mt-2 flex-1"
+                                                        rows="5"
+                                                    ></textarea>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button type="button" id="new-checkup-confirm-btn" class="button w-20 bg-theme-1 text-white">
+                                                <%= __('checkup.new_modal.send') %>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"
+                                                data-dismiss="modal"
+                                            >
+                                                <%= __('checkup.new_modal.cancel') %>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            let checkupTable;
+
+            function drawTable() {
+                if (checkupTable) {
+                    checkupTable.ajax.reload();
+                } else {
+                    checkupTable = $("#checkup-datatable").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[5, "desc"]],
+                        columns: [
+                            { title: "<%= __('checkup.table.no') %>", data: "no", width: "60px", orderable: false },
+                            { title: "<%= __('checkup.table.check_content') %>", data: "content", width: "30%" },
+                            { title: "<%= __('checkup.table.status') %>", data: "status" },
+                            { title: "<%= __('checkup.table.start_date') %>", data: "startTime" },
+                            { title: "<%= __('checkup.table.end_date') %>", data: "endTime" },
+                            { title: "<%= __('checkup.table.created_date') %>", data: "createdAt", width: "160px" },
+                            { title: "<%= __('checkup.table.actions') %>", data: "action", orderable: false },
+                        ],
+                        ajax: {
+                            url: "/api/checkup",
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.data) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].content = convertString(res.data[i].content, 30);
+                                        res.data[i].startTime = convertDate(res.data[i].startTime);
+                                        res.data[i].endTime = convertDate(res.data[i].endTime);
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt);
+
+                                        let statusHtml = "";
+                                        let actionHtml = "";
+
+                                        if (res.data[i].status == 0) {
+                                            statusHtml += `<p class="enterpriseRole text-theme-9"><%= __('checkup.table.status_checking') %></p>`;
+                                            actionHtml += `<button class="button button--sm mb-1 bg-theme-1 text-white mr-1" onclick="handleRelease(${res.data[i].id})"><%= __('checkup.table.status_check_release') %></button>`;
+                                            actionHtml += `<button class="button button--sm mb-1 bg-theme-6 text-white" onclick="handleDelete(${res.data[i].id})"><%= __('checkup.table.status_check_deleted') %></button>`;
+                                        } else {
+                                            statusHtml += `<p class="enterpriseRole text-theme-6 "><%= __('checkup.table.status_check_canceled') %></p>`;
+                                            actionHtml += `<button class="button button--sm mb-1 bg-theme-6 text-white" onclick="handleDelete(${res.data[i].id})"><%= __('checkup.table.status_check_deleted') %></button>`;
+                                        }
+
+                                        res.data[i].status = statusHtml;
+                                        res.data[i].action = actionHtml;
+                                    }
+
+                                    $("#checkup-count").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function validateCreate(data) {
+                if (data.startTime == "") {
+                    showToast("warning", "<%= __('checkup.please_check_start_date') %>");
+                    return false;
+                }
+                if (data.endTime == "") {
+                    showToast("warning", "<%= __('checkup.please_check_end_date') %>");
+                    return false;
+                }
+                if (data.startTime > data.endTime) {
+                    showToast("warning", "<%= __('checkup.please_check_end_date') %>");
+                    return false;
+                }
+                if (data.content == "") {
+                    showToast("warning", "<%= __('checkup.please_check_content') %>");
+                    return false;
+                }
+
+                return true;
+            }
+
+            function handleDelete(id) {
+                showConfirmAlert("<%= __('checkup.do_you_delete_check') %>", function () {
+                    $.ajax({
+                        type: "DELETE",
+                        url: `/api/checkup/${id}`,
+                        success: function (res) {
+                            if (res.status) {
+                                showToast("success", "<%= __('checkup.success') %>");
+                                drawTable();
+                            }
+                        },
+                    });
+                });
+            }
+
+            function handleRelease(id) {
+                showConfirmAlert("<%= __('checkup.do_you_release_check') %>", function () {
+                    $.ajax({
+                        type: "PUT",
+                        url: `/api/checkup/${id}`,
+                        success: function (res) {
+                            if (res.status) {
+                                showToast("success", "<%= __('checkup.success') %>");
+                                drawTable();
+                            }
+                        },
+                    });
+                });
+            }
+
+            $("#new-checkup-btn").click(function () {
+                resetForm("new-checkup-form");
+                cash("#new-checkup-modal").modal("show");
+            });
+
+            $("#new-checkup-confirm-btn").click(function () {
+                const requestData = {
+                    startTime: $("#start-date").val(),
+                    endTime: $("#end-date").val(),
+                    content: $("#new-checkup-content").val(),
+                };
+
+                if (!validateCreate(requestData)) {
+                    return;
+                }
+
+                $("#new-checkup-confirm-btn").attr("disabled", true);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/checkup",
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('checkup.success') %>");
+                            cash("#new-checkup-modal").modal("hide");
+                            drawTable();
+                        }
+                        $("#new-checkup-confirm-btn").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#new-checkup-confirm-btn").removeAttr("disabled");
+                    },
+                });
+            });
+
+            drawTable();
+        </script>
+    </body>
+</html>

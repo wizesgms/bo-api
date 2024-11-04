@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('message.page_title') }) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('message.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div>
+                                    <div class="col-12">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <div class="card-header flex justify-between items-center">
+                                                    <div style="font-size: 14px">
+                                                        <span><%= __('message.table_title') %></span>
+                                                        <span id="message-count">(0)</span>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row items-center">
+                                                        <div class="mr-2">
+                                                            <select class="input min-width border mr-3" id="agent-list" onchange="drawTable()"></select>
+                                                        </div>
+                                                        <% if(session.auth.role != 1) { %>
+                                                        <button id="message-btn" class="button flex items-center justify-center bg-theme-1 text-white">
+                                                            <i data-feather="plus-circle" class="w-4 h-4 mr-2"></i> <%= __('message.create_new_message') %>
+                                                        </button>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                                <div class="card-body">
+                                                    <div>
+                                                        <div class="col-sm-12">
+                                                            <div class="table-scrollable">
+                                                                <div class="table-responsive">
+                                                                    <table id="message-datatable" class="table table-striped table-bordered"></table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- new message modal -->
+                                <div class="modal" id="message-modal">
+                                    <div class="modal__content">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto" id="message-action" hasanswer="false">
+                                                <%= __('message.new_modal.title') %>
+                                            </h2>
+                                        </div>
+                                        <form id="message-form">
+                                            <div class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                                <input type="hidden" id="message-id" />
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('message.new_modal.message_title') %></label>
+                                                    <input id="message-title" type="text" class="input w-full border mt-2 flex-1" />
+                                                </div>
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('message.new_modal.message_content') %></label>
+                                                    <textarea
+                                                        id="message-description"
+                                                        placeholder=""
+                                                        class="input w-full border mt-2 flex-1"
+                                                        rows="5"
+                                                    ></textarea>
+                                                </div>
+                                                <div class="col-span-12 sm:col-span-12" id="message-answer">
+                                                    <label><%= __('message.new_modal.reply_content') %></label>
+                                                    <div class="col-sm-8">
+                                                        <textarea
+                                                            id="message-answer-content"
+                                                            type="text"
+                                                            class="input w-full border mt-2 flex-1"
+                                                            rows="5"
+                                                        ></textarea>
+                                                        <div class="col-sm-12" id="message-answer-date">
+                                                            <%= __('message.new_modal.created_date') %> : <span id="answer-date"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button type="button" id="message-confirm-btn" class="button w-20 bg-theme-1 text-white">
+                                                <%= __('message.new_modal.send') %>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"
+                                                data-dismiss="modal"
+                                            >
+                                                <%= __('message.new_modal.cancel') %>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            let messageTable;
+            let sessionAgentId = `<%= session.auth.id %>`;
+            let sessionAgentCode = `<%= session.auth.agentCode %>`;
+            let sessionAgentRole = `<%= session.auth.role %>`;
+            let sessionAgentParentCode = `<%= session.auth.parentCode %>`;
+
+            function drawTable() {
+                if (messageTable) {
+                    messageTable.ajax.reload();
+                } else {
+                    messageTable = $("#message-datatable").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[6, "desc"]],
+                        columns: [
+                            { title: `<%= __('message.table.no') %>`, data: "no", width: "60px", orderable: false },
+                            { title: `<%= __('message.table.topic') %>`, data: "messageTitle" },
+                            { title: `<%= __('message.table.asker') %>`, data: "senderCode" },
+                            { title: `<%= __('message.table.high_agent') %>`, data: "receiverCode" },
+                            { title: `<%= __('message.table.reading_status') %>`, data: "readStatus" },
+                            { title: `<%= __('message.table.reply_status') %>`, data: "answerStatus" },
+                            { title: `<%= __('message.table.created_date') %>`, data: "createdAt", width: "160px" },
+                            { title: `<%= __('message.table.actions') %>`, data: "action", width: "100px", orderable: false },
+                        ],
+                        ajax: {
+                            url: "/api/message",
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+
+                                let selectedAgentCode = $("#agent-list").val();
+                                if (selectedAgentCode) {
+                                    data.agentCode = selectedAgentCode;
+                                } else {
+                                    data.agentCode = "all";
+                                }
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.data) {
+                                    let selectedAgentCode = $("#agent-list").val();
+
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].messageTitle = convertString(res.data[i].messageTitle, 30);
+                                        res.data[i].senderCode = convertString(res.data[i].senderCode, 30);
+                                        res.data[i].receiverCode = convertString(res.data[i].receiverCode, 30);
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt);
+
+                                        let readStatusHtml = "";
+                                        let answerStatusHtml = "";
+                                        let actionHtml = "";
+
+                                        if (res.data[i].readStatus == 0) {
+                                            readStatusHtml += `<p class="enterpriseRole text-theme-6"><%= __('message.table.not_read') %></p>`;
+                                        } else {
+                                            readStatusHtml += `<p class="enterpriseRole text-theme-9 "><%= __('message.table.read') %></p>`;
+                                        }
+
+                                        if (
+                                            (selectedAgentCode == null ||
+                                                selectedAgentCode == "" ||
+                                                selectedAgentCode == sessionAgentCode ||
+                                                selectedAgentCode == "all") &&
+                                            res.data[i].answerStatus == 0 &&
+                                            res.data[i].receiverCode == sessionAgentCode
+                                        ) {
+                                            actionHtml += `<button class="button button--sm mb-1 bg-theme-1 text-white mr-1" onclick="handleAnswer(${res.data[i].id})"><%= __('message.reply_message') %></button>`;
+                                        } else {
+                                            actionHtml += `<button class="button button--sm mb-1 bg-theme-1 text-white mr-1" onclick="handleDetail(${res.data[i].id})"><%= __('message.view_message') %></button>`;
+                                        }
+
+                                        if (res.data[i].answerStatus == 0) {
+                                            answerStatusHtml += `<p class="enterpriseRole text-theme-7 dark:text-theme-2"><%= __('message.table.pending') %></p>`;
+                                        } else {
+                                            answerStatusHtml += `<p class="enterpriseRole text-theme-10 "><%= __('message.table.completed') %></p>`;
+                                        }
+
+                                        actionHtml += `<button class="button button--sm mb-1 bg-theme-6 text-white" onclick="handleDelete(${res.data[i].id})"><%= __('message.delete_message') %></button>`;
+
+                                        res.data[i].readStatus = readStatusHtml;
+                                        res.data[i].answerStatus = answerStatusHtml;
+                                        res.data[i].action = actionHtml;
+                                    }
+
+                                    $("#message-count").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function validateCreate(data) {
+                if (data.hasAnswer && data.answerContent == "") {
+                    $("#message-answer-content").focus();
+                    showToast("warning", "<%= __('message.please_check_reply_message') %>");
+                    return false;
+                }
+                if (!data.hasAnswer && (data.messageTitle == "" || data.messageContent == "")) {
+                    if (data.messageTitle == "") {
+                        $("#message-title").focus();
+                    } else {
+                        $("#message-description").focus();
+                    }
+                    showToast("warning", "<%= __('message.please_check_message') %>");
+                    return false;
+                }
+                return true;
+            }
+
+            function handleDelete(id) {
+                showConfirmAlert("<%= __('message.do_you_delete_message') %>", function () {
+                    $.ajax({
+                        type: "DELETE",
+                        url: `/api/message/${id}`,
+                        success: function (res) {
+                            if (res.status) {
+                                showToast("success", "<%= __('message.success') %>");
+                                drawTable();
+                            }
+                        },
+                    });
+                });
+            }
+
+            function handleAnswer(id) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/message/${id}`,
+                    success: function (res) {
+                        if (res.status == 1) {
+                            resetForm("message-form");
+                            $("#message-title").val(res.message.messageTitle);
+                            $("#message-description").val(res.message.messageContent);
+                            $("#message-id").val(id);
+
+                            $("#message-title").attr("readonly", "readonly");
+                            $("#message-description").attr("readonly", "readonly");
+
+                            $("#message-action").html("<%= __('message.reply_message') %>");
+                            $("#message-action").attr("hasanswer", "true");
+
+                            $("#message-answer-date").hide();
+                            $("#message-answer").show();
+                            $("#message-answer-content").removeAttr("readonly", "readonly");
+                            $("#message-confirm-btn").show();
+                            cash("#message-modal").modal("show");
+                            drawTable();
+                        }
+                    },
+                });
+            }
+
+            function handleDetail(id) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/message/${id}`,
+                    success: function (res) {
+                        if (res.status == 1) {
+                            resetForm("message-form");
+                            $("#message-title").val(res.message.messageTitle);
+                            $("#message-description").val(res.message.messageContent);
+                            $("#message-answer-content").val(res.message.answerContent);
+
+                            if (res.message.answerStatus == 1) {
+                                $("#answer-date").html(convertDate(res.message.updatedAt));
+                                $("#message-answer").show();
+                            } else {
+                                $("#answer-date").html("");
+                                $("#message-answer").hide();
+                            }
+
+                            $("#message-action").html("<%= __('message.message_content') %>");
+                            $("#message-answer-date").show();
+                            $("#message-confirm-btn").hide();
+                            cash("#message-modal").modal("show");
+
+                            $("#message-title").attr("readonly", "readonly");
+                            $("#message-description").attr("readonly", "readonly");
+                            $("#message-answer-content").attr("readonly", "readonly");
+                        }
+                    },
+                });
+            }
+
+            function getChildAgents(id) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/agent/child/${id}`,
+                    success: function (res) {
+                        if (res.status == 1) {
+                            let data = res.child;
+                            let optionStr = `<option value="all"><%= __('message.all_agent') %></option>`;
+
+                            for (let i = 0; i < data.length; i++) {
+                                optionStr += `<option value = '${data[i].agentCode}'> ${data[i].agentCode} </option>`;
+                            }
+
+                            $("#agent-list").html(optionStr);
+                            $("#agent-list").val("all");
+                            tail.select("#agent-list", { search: true, width: 160, locale: "<%= session.locale %>" });
+                        }
+                    },
+                });
+            }
+
+            $("#message-btn").click(function () {
+                // set title & readonly
+                resetForm("message-form");
+                $("#message-action").html("<%= __('message.new_message') %>");
+                $("#message-action").attr("hasanswer", "false");
+
+                $("#message-title").removeAttr("readonly", "readonly");
+                $("#message-description").removeAttr("readonly", "readonly");
+                $("#message-answer").hide();
+                $("#message-confirm-btn").show();
+
+                cash("#message-modal").modal("show");
+            });
+
+            $("#message-confirm-btn").click(function () {
+                // send answer message
+                let requestData = {};
+
+                if ($("#message-action").attr("hasanswer") == "true") {
+                    // edit
+                    requestData.answerContent = $("#message-answer-content").val();
+                    requestData.hasAnswer = true;
+                } else {
+                    // create
+                    requestData.messageTitle = $("#message-title").val();
+                    requestData.messageContent = $("#message-description").val();
+                    requestData.hasAnswer = false;
+                }
+
+                if (!validateCreate(requestData)) {
+                    return;
+                }
+
+                let reqType = "";
+                let url = "";
+                if (requestData.hasAnswer) {
+                    reqType = "PUT";
+                    url = "/api/message/" + $("#message-id").val();
+                } else {
+                    reqType = "POST";
+                    url = "/api/message";
+                }
+                delete requestData.hasAnswer;
+
+                $("#message-confirm-btn").attr("disabled", true);
+
+                $.ajax({
+                    type: reqType,
+                    url: url,
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('message.success') %>");
+                            cash("#message-modal").modal("hide");
+                            drawTable();
+                        }
+                        $("#message-confirm-btn").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#message-confirm-btn").removeAttr("disabled");
+                    },
+                });
+            });
+
+            drawTable();
+            getChildAgents(sessionAgentId);
+        </script>
+    </body>
+</html>

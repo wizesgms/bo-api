@@ -1,0 +1,487 @@
+
+<div class="mt-3 mb-2 agent-level-1">Call API (For Slot Game)</div>
+<div class="accordion__pane border api_doc dark:border-dark-5 p-2 transfer_api">
+    <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">1. <%= __('docs.list_label.call_players') %> </a>
+    <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.request_example') %>:
+                <button
+                    type="button"
+                    data-clipboard-target="#call-players"
+                    class="btn button button--sm bg-theme-1 text-white ml-3"
+                >
+                    <%= __('docs.button.copy') %>
+                </button>
+                <br>
+                <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                <pre>
+<code id="call-players">
+    {
+        "method": "call_players",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>"
+    }
+
+</code>
+            </pre>
+            </div>
+
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.response_example') %>:
+                <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "data": [
+            {
+            "user_code": "test",
+            "provider_code": "PRAGMATIC",
+            "game_code": "vs20doghouse",
+            "bet": 1600,
+            "balance": 11804848.2,
+            "total_debit": 1271837.75,
+            "total_credit": 3383894.16,
+            "target_rtp": 92,
+            "real_rtp": 266.06
+            }
+        ]
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "Invalid Agent."
+    }
+
+</code>
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+    <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">2. <%= __('docs.list_label.call_list') %> </a>
+    <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.request_example') %>:
+                <button
+                    type="button"
+                    data-clipboard-target="#call-list"
+                    class="btn button button--sm bg-theme-1 text-white ml-3"
+                >
+                    <%= __('docs.button.copy') %>
+                </button>
+                <br>
+                <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                <pre>
+<code id="call-list">
+    {
+        "method": "call_list",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "provider_code": "PRAGMATIC",
+        "game_code": "vs20doghouse",
+        "user_code": "test"
+    }
+
+</code>
+            </pre>
+            </div>
+
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.response_example') %>:
+                <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "calls": [
+            {
+                "rtp": 75615,
+                "call_type": "Free"
+            },
+            {
+                "rtp": 62185,
+                "call_type": "Free"
+            },
+            {
+                "rtp": 45010,
+                "call_type": "Free"
+            },
+        ]
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "External Error"
+    }
+
+</code>
+            </pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+    <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">3. <%= __('docs.list_label.call_apply') %> </a>
+    <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.request_example') %>:
+                <button
+                    type="button"
+                    data-clipboard-target="#call-apply"
+                    class="btn button button--sm bg-theme-1 text-white ml-3"
+                >
+                    <%= __('docs.button.copy') %>
+                </button>
+                <br>
+                <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                <pre>
+<code id="call-apply">
+    {
+        "method": "call_apply",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "provider_code": "PRAGMATIC",
+        "game_code": "vs20doghouse",
+        "user_code": "test",
+        "call_rtp" : 45010, // You can get this value from Call List API
+        "call_type" : 1 // 1: Common Free, 2: Buy Bonus Free
+    }
+</code>
+            </pre>
+            </div>
+
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.response_example') %>:
+                <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "called_money": 720160,       // bet * ( rtp / 100 ) 
+        "msg": "SUCCESS"
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "Processing call is existed."
+    }
+
+</code>
+            </pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+    <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">4. <%= __('docs.list_label.call_history') %> </a>
+    <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.request_example') %>:
+                <button
+                    type="button"
+                    data-clipboard-target="#call-history"
+                    class="btn button button--sm bg-theme-1 text-white ml-3"
+                >
+                    <%= __('docs.button.copy') %>
+                </button>
+                <br>
+                <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                <pre>
+<code id="call-history">
+    {
+        "method": "call_history",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "offset" : 0,
+        "limit" : 100
+    }
+
+</code>
+
+
+<div style="background-color: black; color: #faa178;">
+    Call Reference
+
+    - status
+    0: Waiting
+    1: Processing
+    2: Finished
+    3: Rejected By GameServer (Because Bet Amount Changed)
+    4: Canceled By Cancel API & Cancel Button Pressing
+
+    - expect, missed, real
+    Admin apply 1000 money Call, Then this is expect money.
+    User received 800 money, Then this is real money.
+    200 money is missed money.
+    This missed money will be return to Admin.
+
+    Why missed money?
+
+    Because PRAGMATIC Free option game;
+    ex: 5 Lions Megaways, The Dog House Megaways, Wild Booster ...
+
+</div>
+
+            </pre>
+            </div>
+
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.response_example') %>:
+                <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+    "stat   us": 1,
+    "data": [
+            {
+            "id": 93,
+            "agent_code": "<%= session.auth.agentCode %>",
+            "user_code": "test",
+            "provider_code": "PRAGMATIC",
+            "game_code": "vs20doghouse",
+            "bet": 1600,
+            "user_prev": null,
+            "user_after": null,
+            "agent_prev": 901200,
+            "agent_after": 181040,
+            "expect": 720160,
+            "missed": 720160,
+            "real": 0,
+            "rtp": 45010,
+            "type": "common",
+            "status": 0, // Waiting
+            "msg": null,
+            "created_at": "2023-02-23T04:02:45.000Z",
+            "updated_at": "2023-02-23T04:02:46.000Z"
+            },
+            {
+            "id": 94,
+            "agent_code": "<%= session.auth.agentCode %>",
+            "user_code": "test",
+            "provider_code": "PRAGMATIC",
+            "game_code": "vs20doghouse",
+            "bet": 1600,
+            "user_prev": null,
+            "user_after": null,
+            "agent_prev": 901200,
+            "agent_after": 181040,
+            "expect": 720160,
+            "missed": 720160,
+            "real": 0,
+            "rtp": 45010,
+            "type": "common",
+            "status": 1, // Processing
+            "msg": "Processing",
+            "created_at": "2023-02-23T04:02:45.000Z",
+            "updated_at": "2023-02-23T04:02:46.000Z"
+            },
+            {
+            "id": 95,
+            "agent_code": "<%= session.auth.agentCode %>",
+            "user_code": "test",
+            "provider_code": "PRAGMATIC",
+            "game_code": "vs20doghouse",
+            "bet": 2000,
+            "user_prev": 10748348.2,
+            "user_after": 10748348.2,
+            "agent_prev": 8588141.8,
+            "agent_after": 8586141.8,
+            "expect": 2000,
+            "missed": 0,
+            "real": 2000,
+            "rtp": 100,
+            "type": "common",
+            "status": 2, // Finished
+            "msg": "Finished",
+            "created_at": "2023-02-23T00:48:38.000Z",
+            "updated_at": "2023-02-23T00:50:30.000Z"
+            },
+            {
+            "id": 106,
+            "agent_code": "<%= session.auth.agentCode %>",
+            "user_code": "test",
+            "provider_code": "PRAGMATIC",
+            "game_code": "vs20doghouse",
+            "bet": 2000,
+            "user_prev": null,
+            "user_after": null,
+            "agent_prev": 6338441.8,
+            "agent_after": 6338441.8,
+            "expect": 900200,
+            "missed": 900200,
+            "real": 0,
+            "rtp": 45010,
+            "type": "common",
+            "status": 3, //Rejected By GameServer (Bet amount changed)
+            "msg": "Rejected (callBet = 2000, currentBet = 1600)}",
+            "created_at": "2023-02-23T01:37:13.000Z",
+            "updated_at": "2023-02-23T01:37:18.000Z"
+            },
+            {
+            "id": 107,
+            "agent_code": "<%= session.auth.agentCode %>",
+            "user_code": "test",
+            "provider_code": "PRAGMATIC",
+            "game_code": "vs20doghouse",
+            "bet": 1600,
+            "user_prev": null,
+            "user_after": null,
+            "agent_prev": 6338441.8,
+            "agent_after": 6338441.8,
+            "expect": 720160,
+            "missed": 720160,
+            "real": 0,
+            "rtp": 45010,
+            "type": "common",
+            "status": 4, //Canceled by Cancel API or Cancel Button Click
+            "msg": "Canceled by User",
+            "created_at": "2023-02-23T01:43:58.000Z",
+            "updated_at": "2023-02-23T01:44:04.000Z"
+            }
+        ]
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "Invalid Agent."
+    }
+
+</code>
+            </pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+    <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">5. <%= __('docs.list_label.call_cancel') %> </a>
+    <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.request_example') %>:
+                <button
+                    type="button"
+                    data-clipboard-target="#call-cancel"
+                    class="btn button button--sm bg-theme-1 text-white ml-3"
+                >
+                    <%= __('docs.button.copy') %>
+                </button>
+                <br>
+                <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                <pre>
+<code id="call-cancel">
+    {
+        "method": "call_cancel",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "call_id" : 109 // You can get from Call History API
+    }
+
+
+</code>
+                </pre>
+            </div>
+
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.response_example') %>:
+                <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "canceled_money": 720160,
+        "msg": "SUCCESS"
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "There is no waiting call."
+    }
+
+</code>
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+    <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">
+        6. <%= __('docs.list_label.control_rtp') %>
+    </a>
+    <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.request_example') %>:
+                <button
+                    type="button"
+                    data-clipboard-target="#agent-info"
+                    class="btn button button--sm bg-theme-1 text-white ml-3"
+                >
+                    <%= __('docs.button.copy') %>
+                </button>
+                <br>
+                <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                <pre>
+<code id="agent-info">
+    {
+        "method": "control_rtp",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "provider_code": "PRAGMATIC",
+        "user_code": "test",
+        "rtp" : 92
+    }
+
+
+</code>
+
+                </pre>
+            </div>
+
+            <div class="col-span-12 sm:col-span-6">
+                <%= __('docs.list_label.response_example') %>:
+                <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "changed_rtp": 92
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "Invalid Parameter.",
+        "detail": "rtp must be less than or equal to 95"
+    }
+
+</code>
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+                                        

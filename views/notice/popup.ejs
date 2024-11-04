@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('popup.page_title')}) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('popup.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div>
+                                    <div class="col-12">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <div class="card-header flex justify-between items-center">
+                                                    <div style="font-size: 14px">
+                                                        <span><%= __('popup.table_title') %></span>
+                                                        <span id="popup-count">(0)</span>
+                                                    </div>
+                                                    <button id="new-popup-btn" class="button flex items-center justify-center bg-theme-1 text-white">
+                                                        <i data-feather="plus-circle" class="w-4 h-4 mr-2"></i> <%= __('popup.creat_new_check') %>
+                                                    </button>
+                                                </div>
+                                                <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                                <div class="card-body">
+                                                    <div>
+                                                        <div class="col-sm-12">
+                                                            <div class="table-scrollable">
+                                                                <div class="table-responsive">
+                                                                    <table id="popup-datatable" class="table table-striped table-bordered"></table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- new popup modal -->
+                                <div class="modal" id="new-popup-modal">
+                                    <div class="modal__content">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto"><%= __('popup.new_modal.title') %></h2>
+                                        </div>
+                                        <form id="new-popup-form">
+                                            <div class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('popup.new_modal.content') %></label>
+                                                    <textarea id="new-popup-content" placeholder="" class="input w-full border mt-2 flex-1" rows="5"></textarea>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button type="button" id="new-popup-confirm-btn" class="button w-20 bg-theme-1 text-white">
+                                                <%= __('popup.new_modal.send') %>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"
+                                                data-dismiss="modal"
+                                            >
+                                                <%= __('popup.new_modal.cancel') %>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            let popupTable;
+
+            function drawTable() {
+                if (popupTable) {
+                    popupTable.ajax.reload();
+                } else {
+                    popupTable = $("#popup-datatable").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[3, "desc"]],
+                        columns: [
+                            { title: "<%= __('popup.table.no') %>", data: "no", width: "60px", orderable: false },
+                            { title: "<%= __('popup.table.content') %>", data: "content" },
+                            { title: "<%= __('popup.table.status') %>", data: "status", width: "240px" },
+                            { title: "<%= __('popup.table.created_date') %>", data: "createdAt", width: "200px" },
+                            { title: "<%= __('popup.table.actions') %>", data: "action", width: "160px", orderable: false },
+                        ],
+                        ajax: {
+                            url: "/api/popup",
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.status && res.data) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].content = convertString(res.data[i].content, 30);
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt);
+
+                                        let statusHtml = "";
+                                        let actionHtml = "";
+
+                                        if (res.data[i].status == 0) {
+                                            statusHtml += `<p class="enterpriseRole text-theme-9"><%= __('popup.table.status_opened') %></p>`;
+                                            actionHtml += `<button class="button button--sm mb-1 bg-theme-1 text-white mr-1" onclick="handleRelease(${res.data[i].id})"><%= __('popup.table.status_close') %></button>`;
+                                            actionHtml += `<button class="button button--sm mb-1 bg-theme-6 text-white" onclick="handleDelete(${res.data[i].id})"><%= __('popup.table.status_delete') %></button>`;
+                                        } else {
+                                            statusHtml += `<p class="enterpriseRole text-theme-6 "><%= __('popup.table.status_closed') %></p>`;
+                                            actionHtml += `<button class="button button--sm mb-1 bg-theme-6 text-white" onclick="handleDelete(${res.data[i].id})"><%= __('popup.table.status_delete') %></button>`;
+                                        }
+
+                                        res.data[i].status = statusHtml;
+                                        res.data[i].action = actionHtml;
+                                    }
+
+                                    $("#popup-count").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function validate(data) {
+                if (data.content == "") {
+                    showToast("warning", `<%= __('popup.please_check_popup') %>`);
+                    return false;
+                }
+
+                return true;
+            }
+
+            function handleDelete(id) {
+                showConfirmAlert(`<%= __('popup.do_you_really_delete_popup') %>`, function () {
+                    $.ajax({
+                        type: "DELETE",
+                        url: `/api/popup/${id}`,
+                        success: function (res) {
+                            if (res.status) {
+                                showToast("success", "<%= __('popup.success') %>");
+                                drawTable();
+                            }
+                        },
+                        error: function () {
+                            showToast("error", "success", `<%= __('common.server_error') %>`);
+                        },
+                    });
+                });
+            }
+
+            function handleRelease(id) {
+                showConfirmAlert(`<%= __('popup.do_you_really_close_popup') %>`, function () {
+                    $.ajax({
+                        type: "PUT",
+                        url: `/api/popup/${id}`,
+                        success: function (res) {
+                            if (res.status) {
+                                showToast("success", `<%= __('popup.success') %>`);
+                                drawTable();
+                            }
+                        },
+                        error: function () {
+                            showToast("error", `<%= __('common.server_error') %>`);
+                        },
+                    });
+                });
+            }
+
+            $("#new-popup-btn").click(function () {
+                resetForm("new-popup-form");
+                cash("#new-popup-modal").modal("show");
+            });
+
+            $("#new-popup-confirm-btn").click(function () {
+                const requestData = {
+                    content: $("#new-popup-content").val(),
+                };
+
+                if (!validate(requestData)) {
+                    return;
+                }
+
+                $("#new-popup-confirm-btn").attr("disabled", true);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/popup",
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('popup.success') %>");
+                            cash("#new-popup-modal").modal("hide");
+                            drawTable();
+                        }
+                        $("#new-popup-confirm-btn").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#new-popup-confirm-btn").removeAttr("disabled");
+                        showToast("error", `<%= __('common.server_error') %>`);
+                    },
+                });
+            });
+
+            drawTable();
+        </script>
+    </body>
+</html>

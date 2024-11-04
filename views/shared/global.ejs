@@ -1,0 +1,321 @@
+<script>
+    const dataTableGlobalConfig = {
+        serverSide: true,
+        orderMulti: false,
+        scrollX: true,
+        language: {
+            search: "<%= __('global.datatable.search') %>",
+            paginate: {
+                next: "<%= __('global.datatable.next') %>",
+                previous: "<%= __('global.datatable.prev') %>",
+            },
+            zeroRecords: "<%= __('global.datatable.no_data') %>",
+            lengthMenu: "<%= __('global.datatable.length_menu') %>",
+            info: "<%= __('global.datatable.info') %>",
+            infoEmpty: "<%= __('global.datatable.info_empty') %>",
+            infoFiltered: "<%= __('global.datatable.info_filtered') %>",
+        },
+        aLengthMenu: [50, 100, 200, 500],
+    };
+
+    function showToast(type, message) {
+        const titles = {
+            success: "<%= __('global.success') %>",
+            info: "<%= __('global.info') %>",
+            error: "<%= __('global.error') %>",
+            warning: "<%= __('global.warning') %>",
+        };
+
+        toastr[type](message, titles[type]);
+    }
+
+    function convertDate(date) {
+        return moment(date).format("YYYY-MM-DD HH:mm:ss");
+    }
+
+    function convertNumber(number, lang = "en") {
+        let resultString = "";
+
+        if (number == 0) {
+            return 0;
+        }
+
+        if (lang == "en") {
+            resultString = Number(number).toLocaleString();
+        } else if (lang == "ko") {
+            let inputNumber = number < 0 ? false : number;
+            let unitWords = ["", "만", "억", "조", "경"];
+            let splitUnit = 10000;
+            let splitCount = unitWords.length;
+            let resultArray = [];
+
+            for (let i = 0; i < splitCount; i++) {
+                let unitResult = (inputNumber % Math.pow(splitUnit, i + 1)) / Math.pow(splitUnit, i);
+                unitResult = Math.floor(unitResult);
+                if (unitResult > 0) {
+                    resultArray[i] = unitResult;
+                }
+            }
+
+            for (let i = 0; i < resultArray.length; i++) {
+                if (!resultArray[i]) continue;
+                resultString = String(resultArray[i]) + unitWords[i] + resultString;
+            }
+        } else {
+            resultString = number;
+        }
+
+        return resultString;
+    }
+
+    function convertString(input, length) {
+        if (input.length > length) {
+            return input.slice(0, length) + " ...";
+        } else {
+            return input;
+        }
+    }
+
+    function resetForm(formId) {
+        let form = document.getElementById(formId);
+        form.reset();
+    }
+
+    function showConfirmAlert(title, callback) {
+        Swal.fire({
+            text: title,
+            icon: "question",
+            showCancelButton: !0,
+            confirmButtonText: "<%= __('global.yes') %>",
+            cancelButtonText: "<%= __('global.no') %>",
+            confirmButtonColor: "#1C3FAA",
+        }).then(function (t) {
+            if (t.value) {
+                callback();
+            }
+        });
+    }
+
+    function getBalanceInfo() {
+        $.ajax({
+            type: "GET",
+            url: "/api/realtime",
+            success: function (response) {
+                if (response.status) {
+                    const result = response.result;
+
+                    $("#agent_balance").html(result.agentBalance.toLocaleString());
+                    $("#lower_balance").html(result.lowerBalance.toLocaleString());
+
+                    if (result.messages.length > 0) {
+                        let messageContentHtml = "";
+
+                        const messageType = {
+                            0: `<span class="text-xs px-1 rounded-full bg-theme-12 text-white mx-1"><%= __('global.new_message') %></span>`,
+                            1: `<span class="text-xs px-1 rounded-full bg-theme-6 text-white mx-1"><%= __('global.waiting_answer') %></span>`,
+                        };
+
+                        for (let i = 0; i < result.messages.length; i++) {
+                            const message = result.messages[i];
+
+                            messageContentHtml += `<div class="cursor-pointer relative flex items-center mb-2" onclick='handleMessage()'>`;
+                            messageContentHtml += `<div class="w-8 h-8 flex-none image-fit mr-1">`;
+                            messageContentHtml += `<img class="rounded-full bg-theme-1" src="/assets/images/logo.svg">`;
+                            messageContentHtml += `</div>`;
+                            messageContentHtml += `<div class="ml-2 overflow-hidden">`;
+                            messageContentHtml += `<div class="flex items-center">`;
+                            messageContentHtml += `<a href="javascript:;" class="font-medium truncate mr-5">`;
+                            messageContentHtml += `${message.senderCode} ${messageType[message.readStatus]}`;
+                            messageContentHtml += `</a>`;
+                            messageContentHtml += `<div class="text-xs text-gray-500 ml-auto whitespace-no-wrap">${convertDate(message.createdAt)}</div>`;
+                            messageContentHtml += `</div>`;
+                            messageContentHtml += `<div class="w-full truncate text-gray-600">${message.messageTitle}</div>`;
+                            messageContentHtml += `</div>`;
+                            messageContentHtml += `</div>`;
+                        }
+
+                        $("#new-message-content").html(messageContentHtml);
+                        $("#new-message-alarm").addClass("notification animation-blink");
+                    } else {
+                        $("#new-message-content").html(`<span class="text-gray-600"><%= __('global.no_message') %></span>`);
+                        $("#new-message-alarm").removeClass("notification animation-blink");
+                    }
+                }
+            },
+        });
+    }
+
+    function handleMessage() {
+        window.location.href = "/app/message";
+    }
+
+    function validation(num) {
+        if (!isNaN(num) && num >= 50 && num <= 95) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function changeRtp() {
+        const targetRtp = prompt("<%= __('global.please_input_rtp') %> (50 ~ 95)");
+        if (!targetRtp) {
+            return;
+        }
+        
+        if (!validation(targetRtp)) {
+            showToast("error", "<%= __('global.invalid_parameter') %>");
+            return;
+        }
+
+        $.ajax({
+            type: "PUT",
+            url: "/api/agent/rtp",
+            data: {
+                rtp: Number(targetRtp),
+            },
+            success: function (response) {
+                if (response.status) {
+                    $("#agent-rtp").html(targetRtp + "%");
+                    showToast("success", "<%= __('common.operated_successfully') %>");
+                }
+            },
+        });
+    }
+
+    function ajaxErrorHandler(errorMessage) {
+        if (errorMessage == "UNAUTHORIZED") {
+            handleLogout();
+        } else {
+            showToast("error", errorMessage);
+        }
+    }
+
+    function handleLogout() {
+        $.ajax({
+            type: "POST",
+            url: "/api/auth/logout",
+            success: function (res) {
+                if (res.status) {
+                    window.location.href = "/app/login";
+                }
+            },
+        });
+    }
+
+    $(document).ajaxSuccess(function (event, xhr, options) {
+        if (xhr.responseJSON && xhr.responseJSON.status == 0) {
+            const errorMessage = xhr.responseJSON.msg;
+
+            if (errorMessage == "UNAUTHORIZED" && window.location.pathname != "/app/login") {
+                handleLogout();
+            } else {
+                let messageDesc = "";
+
+                switch (errorMessage) {
+                    case "INTERNAL_ERROR":
+                        messageDesc = "<%= __('global.internal_error') %>";
+                        break;
+                    case "EXTERNAL_ERROR":
+                        messageDesc = "<%= __('global.external_error') %>";
+                        break;
+                    case "INVALID_PARAMETER":
+                        messageDesc = "<%= __('global.invalid_parameter') %>";
+                        break;
+                    case "NOW_CHECKING":
+                        messageDesc = "<%= __('global.now_checking') %>";
+                        break;
+                    case "INVALID_AGENT":
+                        messageDesc = "<%= __('global.invalid_agent') %>";
+                        break;
+                    case "INVALID_PARENT_AGENT":
+                        messageDesc = "<%= __('global.invalid_parent_agent') %>";
+                        break;
+                    case "INVALID_PARENT_AGENT_TYPE":
+                        messageDesc = "<%= __('global.invalid_parent_agent_type') %>";
+                        break;
+                    case "INSUFFICIENT_PARENT_FUNDS":
+                        messageDesc = "<%= __('global.insufficient_parent_funds') %>";
+                        break;
+                    case "INSUFFICIENT_AGENT_FUNDS":
+                        messageDesc = "<%= __('global.insufficient_agent_funds') %>";
+                        break;
+                    case "INSUFFICIENT_USER_FUNDS":
+                        messageDesc = "<%= __('global.insufficient_user_funds') %>";
+                        break;
+                    case "INVALID_USER":
+                        messageDesc = "<%= __('global.invalid_user') %>";
+                        break;
+                    case "INVALID_CHECKUP":
+                        messageDesc = "<%= __('global.invalid_checkup') %>";
+                        break;
+                    case "INVALID_MESSAGE":
+                        messageDesc = "<%= __('global.invalid_message') %>";
+                        break;
+                    case "INVALID_POPUP":
+                        messageDesc = "<%= __('global.invalid_popup') %>";
+                        break;
+                    case "DUPLICATED_AGENT":
+                        messageDesc = "<%= __('global.duplicated_agent') %>";
+                        break;
+                    case "INVALID_PROVIDER":
+                        messageDesc = "<%= __('global.invalid_provider') %>";
+                        break;
+                    case "INVALID_PLAYER":
+                        messageDesc = "<%= __('global.invalid_player') %>";
+                        break;
+                    case "INVALID_CALL":
+                        messageDesc = "<%= __('global.invalid_call') %>";
+                        break;
+                    case "NOT_FOUND_CALL":
+                        messageDesc = "<%= __('global.not_found_call') %>";
+                        break;
+                    case "PLAYER_BET_CHANGED":
+                        messageDesc = "<%= __('global.player_bet_changed') %>";
+                        break;
+                    case "CANNOT_UPDATE_AGENT":
+                        messageDesc = "<%= __('global.cannot_change_agent_api') %>";
+                        break;
+
+                    default:
+                        messageDesc = errorMessage;
+                        break;
+                }
+
+                showToast("error", messageDesc);
+            }
+        }
+    });
+
+    $(document).ajaxError(function (event, xhr, options) {
+        showToast("error", "<%= __('common.server_error') %>");
+    });
+
+    $.fn.dataTable.ext.errMode = "throw";
+
+    $(document).ready(function () {
+        const path = window.location.pathname;
+        $(`a[href='${path}']`).addClass("side-menu--active");
+
+        if (localStorage.getItem("theme") == "1") {
+            $("#themeMode").removeClass("dark").addClass("light");
+        } else if (localStorage.getItem("theme") == "0") {
+            $("#themeMode").removeClass("light").addClass("dark");
+        } else {
+            $("#themeMode").addClass("light");
+        }
+
+        getBalanceInfo();
+        setInterval(getBalanceInfo, 1000 * 30);
+    });
+
+    $("#theme").on("click", function () {
+        if ($("#themeMode").hasClass("dark")) {
+            localStorage.setItem("theme", "1");
+            $("#themeMode").removeClass("dark").addClass("light");
+        } else if ($("#themeMode").hasClass("light")) {
+            localStorage.setItem("theme", "0");
+            $("#themeMode").removeClass("light").addClass("dark");
+        }
+    });
+</script>

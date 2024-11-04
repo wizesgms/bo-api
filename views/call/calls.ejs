@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('calls.page_title')}) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('calls.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div class="col-12">
+                                    <div class="card border-primary">
+                                        <div class="card-body">
+                                            <div class="card-header flex justify-between items-center">
+                                                <div style="font-size: 14px">
+                                                    <span><%= __('calls.playing_users_table.title') %> </span>
+                                                    <span id="playing-users-count">(0)</span>
+                                                </div>
+                                            </div>
+                                            <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                            <div class="card-body">
+                                                <div>
+                                                    <div class="col-md-12">
+                                                        <div class="table-scrollable">
+                                                            <div class="table-responsive">
+                                                                <table id="playing-user-table" class="table table-striped table-bordered"></table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div class="col-12">
+                                    <div class="card border-primary">
+                                        <div class="card-body">
+                                            <div class="card-header flex justify-between items-center">
+                                                <div style="font-size: 14px">
+                                                    <span><%= __('calls.call_result_table.title') %> </span>
+                                                    <span id="total-calls-history">(0)</span>
+                                                </div>
+                                                <div class="flex flex-col sm:flex-row items-center">
+                                                    <label class="sm:text-right sm:mr-2"><%= __('calls.call_result_table.date') %></label>
+                                                    <input class="datepicker input w-40 border block mx-auto mr-2" data-single-mode="true" id="game-date" />
+                                                    <button
+                                                        onclick="drawCallResult()"
+                                                        class="button flex items-center justify-center border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10"
+                                                    >
+                                                        <i data-feather="search" class="w-4 h-4 mr-2"></i> <%= __('calls.call_result_table.search') %>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                            <div class="card-body">
+                                                <div>
+                                                    <div class="col-md-12">
+                                                        <div class="table-scrollable">
+                                                            <div class="table-responsive">
+                                                                <table id="call-result-table" class="table table-striped table-bordered"></table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal" id="call-modal" data-backdrop="static" data-keyboard="false">
+                                <div class="modal__content">
+                                    <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                        <h2 class="font-medium text-base mr-auto"><%= __('calls.new_modal.title') %></h2>
+                                    </div>
+                                    <div class="p-5">
+                                        <div class="col-span-12">
+                                            <label><%= __('calls.new_modal.user_code') %></label>
+                                            <input type="text" id="user-code" class="input w-full border mt-2 flex-1" disabled />
+                                        </div>
+                                        <div class="col-span-12">
+                                            <label><%= __('calls.new_modal.provider_code') %></label>
+                                            <input type="text" id="provider-code" class="input w-full border mt-2 flex-1" disabled />
+                                        </div>
+                                        <div class="col-span-12">
+                                            <label><%= __('calls.new_modal.game_code') %></label>
+                                            <input type="text" id="game-code" class="input w-full border mt-2 flex-1" disabled />
+                                        </div>
+                                        <div class="col-span-12">
+                                            <label><%= __('calls.new_modal.current_bet_money') %></label>
+                                            <input type="number" id="bet-money" class="input w-full border mt-2 flex-1" disabled />
+                                        </div>
+                                        <div class="col-span-12">
+                                            <label><%= __('calls.new_modal.call_type') %></label>
+                                            <select class="input w-full border mt-2" id="call-type">
+                                                <option value="1"><%= __('calls.new_modal.call_type.common') %></option>
+                                                <option value="2"><%= __('calls.new_modal.call_type.buy') %></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-span-12">
+                                            <label><%= __('calls.new_modal.call_money') %></label>
+                                            <input type="number" id="call-money" class="input w-full border mt-2 flex-1" />
+                                        </div>
+                                        <div class="col-span-12" id="call-list-area">
+                                            <label><%= __('calls.new_modal.call_list') %></label>
+                                            <select class="input w-full border mt-2" id="call-list" onchange="calculateCallMoney()"></select>
+                                        </div>
+                                    </div>
+                                    <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                        <button type="button" id="btn-call-apply" class="button w-20 bg-theme-1 text-white" onclick="handleApplyCall()">
+                                            <%= __('calls.new_modal.apply') %>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            data-dismiss="modal"
+                                            class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"
+                                        >
+                                            <%= __('calls.new_modal.cancel') %>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            $("#menu-5").addClass("side-menu--active");
+            $("#menu-5 + ul").addClass("side-menu__sub-open");
+
+            let playingUserTable;
+            let callResultTable;
+            let sessionAgentCode = `<%= session.auth.agentCode %>`;
+
+            // 게임중인 유저 내역
+            function drawPlayingUsers() {
+                if (playingUserTable) {
+                    playingUserTable.ajax.reload();
+                } else {
+                    playingUserTable = $("#playing-user-table").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[1, "desc"]],
+                        columns: [
+                            { title: "<%= __('calls.playing_users_table.no') %>", data: "no", width: "60px", orderable: false },
+                            { title: "<%= __('calls.playing_users_table.user_code') %>", data: "userCode" },
+                            { title: "<%= __('calls.playing_users_table.provider_code') %>", data: "providerCode" },
+                            { title: "<%= __('calls.playing_users_table.game_code') %>", data: "gameCode" },
+                            { title: "<%= __('calls.playing_users_table.balance') %>", data: "balance" },
+                            { title: "<%= __('calls.playing_users_table.last_bet') %>", data: "lastBet" },
+                            { title: "<%= __('calls.playing_users_table.total_debit') %>", data: "totalDebit" },
+                            { title: "<%= __('calls.playing_users_table.total_credit') %>", data: "totalCredit" },
+                            { title: "<%= __('calls.playing_users_table.rtp') %>", data: "rtp", orderable: false },
+                            { title: "<%= __('calls.playing_users_table.call_action') %>", data: "callAction", orderable: false },
+                            { title: "<%= __('calls.playing_users_table.rtp_action') %>", data: "rtpAction", orderable: false },
+                        ],
+                        ajax: {
+                            url: "/api/call/players",
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.data) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].userCode = convertString(res.data[i].userCode, 30);
+                                        res.data[i].providerCode = convertString(res.data[i].providerCode, 30);
+                                        res.data[i].gameCode = convertString(res.data[i].gameCode, 30);
+                                        res.data[i].balance = convertNumber(res.data[i].balance);
+                                        res.data[i].lastBet = convertNumber(res.data[i].bet);
+                                        res.data[i].totalDebit = convertNumber(res.data[i].totalDebit);
+                                        res.data[i].totalCredit = convertNumber(res.data[i].totalCredit);
+                                        res.data[i].rtp = convertString(res.data[i].targetRtp + " / " + res.data[i].realRtp, 30);
+                                        res.data[i].callAction = `<button type="button" id="btn-call" class="button button--sm inline-block  border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10 mr-1" onclick="handleCallModal('${res.data[i].userCode}', '${res.data[i].providerCode}', '${res.data[i].gameCode}', '${res.data[i].bet}')"><%= __('calls.call_action') %></button>`;
+                                        res.data[i].rtpAction = `<button type="button" id="btn-call-rtp" class="button button--sm inline-block  border border-theme-9 text-theme-9 dark:border-theme-9 dark:text-theme-9 mr-1" onclick="handleControlRtp('${res.data[i].userCode}', '${res.data[i].providerCode}', '${res.data[i].targetRtp}')"><%= __('calls.rtp_action') %></button>`;
+                                    }
+
+                                    $("#playing-users-count").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function validateCreate(data) {
+                if (data == "") {
+                    $(`#call-money`).focus();
+                    showToast("warning", "<%= __('calls.message.please_input_call_money') %>");
+                    return false;
+                }
+                return true;
+            }
+
+            function calculateCallMoney() {
+                const rtp = $("#call-list").val();
+                const betMoney = Number($("#bet-money").val());
+                const applyCallMoney = (betMoney * Number(rtp)) / 100;
+
+                $("#call-money").val(applyCallMoney);
+            }
+
+            // 콜 모달
+            function handleCallModal(userCode, providerCode, gameCode, betMoney) {
+                $("#user-code").val(userCode);
+                $("#provider-code").val(providerCode);
+                $("#game-code").val(gameCode);
+                $("#bet-money").val(betMoney);
+
+                $("#call-list-area").show();
+                $("#call-generate-money-area").hide();
+                $("#call-money").prop("disabled", true);
+                $("#btn-call-generate").hide();
+                $("#btn-call").attr("disabled", true);
+
+                let data = {
+                    providerCode: providerCode,
+                    gameCode: gameCode,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/call/list",
+                    data: data,
+                    success: function (res) {
+                        if (res.status == 1) {
+                            let callListHtml = ``;
+
+                            for (let call of res.calls) {
+                                callListHtml += `<option value="${call.rtp}"><%= __('calls.betting_money') %> ${
+                                    call.rtp / 100
+                                } (<%= __('calls.times') %>)</option>`;
+                            }
+
+                            $("#call-list").html(callListHtml);
+                            calculateCallMoney();
+
+                            cash("#call-modal").modal("show");
+                        }
+                        $("#btn-call").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#btn-call").removeAttr("disabled");
+                    },
+                });
+            }
+
+            // 콜 적용
+            function handleApplyCall() {
+                const userCode = $("#user-code").val();
+                const providerCode = $("#provider-code").val();
+                const gameCode = $("#game-code").val();
+                const callType = $("#call-type").val();
+                const betMoney = Number($("#bet-money").val());
+                const rtp = Number($("#call-list").val());
+                const callMoney = (rtp / 100) * betMoney.toFixed(2);
+
+                let data = {
+                    agentCode: sessionAgentCode,
+                    userCode: userCode,
+                    providerCode: providerCode,
+                    gameCode: gameCode,
+                    callRtp: rtp,
+                    callWin: (rtp / 100) * betMoney,
+                    callType: callType,
+                };
+
+                showConfirmAlert(
+                    `<%= __('calls.message.do_you_apply_this_call.main') %> <%= __('calls.message.do_you_apply_this_call.call_money') %> ${callMoney}<%= __('calls.message.do_you_apply_this_call.end') %>`,
+                    function () {
+                        $("#btn-call-apply").attr("disabled", true);
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/call/apply",
+                            data: data,
+                            success: function (res) {
+                                if (res.status == 1) {
+                                    showToast("success", "<%= __('common.operated_successfully') %>");
+                                    cash("#call-modal").modal("hide");
+                                    drawCallResult();
+                                    getBalanceInfo();
+                                } else {
+                                    if (res.msg == "PLAYER_BET_CHANGED") {
+                                        cash("#call-modal").modal("hide");
+                                    }
+                                }
+                                $("#btn-call-apply").removeAttr("disabled");
+                            },
+                            error: function () {
+                                $("#btn-call-apply").removeAttr("disabled");
+                            },
+                        });
+                    }
+                );
+            }
+
+            // 콜 취소
+            function handleCallCancel(callId) {
+                let data = {
+                    agentCode: sessionAgentCode,
+                    callId: callId,
+                };
+
+                showConfirmAlert("<%= __('calls.message.do_you_cancel_this_call') %>", function () {
+                    $("#btn-call-cancel").attr("disabled", true);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/call/cancel",
+                        data: data,
+                        success: function (res) {
+                            if (res.status == 1) {
+                                showToast("success", "<%= __('common.operated_successfully') %>");
+                                drawCallResult();
+                                getBalanceInfo();
+                            }
+                            $("#btn-call-cancel").removeAttr("disabled");
+                        },
+                        error: function () {
+                            $("#btn-call-cancel").removeAttr("disabled");
+                        },
+                    });
+                });
+            }
+
+            // 환수 동적조작
+            function handleControlRtp(userCode, providerCode, rtp) {
+                let targetRtp = prompt("<%= __('calls.message.please_input_rtp_you_want_change') %>", rtp);
+                if (targetRtp == null) {
+                    return;
+                }
+
+                if (targetRtp && targetRtp > 0) {
+                    let data = {
+                        agentCode: sessionAgentCode,
+                        userCode: userCode,
+                        providerCode: providerCode,
+                        rtp: targetRtp,
+                    };
+
+                    $("#btn-call-rtp").attr("disabled", true);
+
+                    $.ajax({
+                        type: "post",
+                        url: "/api/call/rtp",
+                        data: data,
+                        success: function (res) {
+                            if (res.status == 1) {
+                                drawPlayingUsers();
+                                showToast("success", "<%= __('common.operated_successfully') %>");
+                            }
+                            $("#btn-call-rtp").removeAttr("disabled");
+                        },
+                        error: function () {
+                            $("#btn-call-rtp").removeAttr("disabled");
+                        },
+                    });
+                } else {
+                    showToast("error", "<%= __('calls.message.please_input_rtp_exactly') %>");
+                    return;
+                }
+            }
+
+            // 콜 결과 얻기
+            function drawCallResult() {
+                if (callResultTable) {
+                    callResultTable.ajax.reload();
+                } else {
+                    callResultTable = $("#call-result-table").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[1, "desc"]],
+                        columns: [
+                            { title: "<%= __('calls.call_result_table.no') %>", data: "no", width: "60px", orderable: false },
+                            { title: "<%= __('calls.call_result_table.created_at') %>", data: "createdAt" },
+                            { title: "<%= __('calls.call_result_table.user_code') %>", data: "userCode" },
+                            { title: "<%= __('calls.call_result_table.provider_code') %>", data: "providerCode" },
+                            { title: "<%= __('calls.call_result_table.game_code') %>", data: "gameCode" },
+                            { title: "<%= __('calls.call_result_table.bet') %>", data: "bet" },
+                            { title: "<%= __('calls.new_modal.call_type') %>", data: "type" },
+                            { title: "<%= __('calls.call_result_table.call_money') %>", data: "callMoney" },
+                            // { title: "<%= __('calls.call_result_table.user_prev') %>", data: "userPrev" },
+                            // { title: "<%= __('calls.call_result_table.user_after') %>", data: "userAfter" },
+                            { title: "<%= __('calls.call_result_table.agent_prev') %>", data: "agentPrev" },
+                            { title: "<%= __('calls.call_result_table.agent_after') %>", data: "agentAfter" },
+                            { title: "<%= __('calls.call_result_table.real_call_money') %>", data: "realCallMoney" },
+                            { title: "<%= __('calls.call_result_table.missed') %>", data: "missed" },
+                            { title: "<%= __('calls.call_result_table.status') %>", data: "status", orderable: false },
+                            { title: "<%= __('calls.call_result_table.status') %>", data: "msg", orderable: false },
+                            { title: "<%= __('calls.call_result_table.action') %>", data: "action", orderable: false },
+                        ],
+                        ajax: {
+                            url: "/api/call/result",
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+
+                                let gameHistoryDate = $("#game-date").val();
+
+                                if (gameHistoryDate) {
+                                    data.date = gameHistoryDate;
+                                } else {
+                                    data.date = new Date();
+                                }
+
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.data) {
+
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt, 30);
+                                        res.data[i].userCode = convertString(res.data[i].userCode, 30);
+                                        res.data[i].providerCode = convertString(res.data[i].providerCode, 30);
+                                        res.data[i].gameCode = convertString(res.data[i].gameCode, 30);
+
+                                        let bet = Number(res.data[i].bet);
+                                        res.data[i].bet = convertNumber(bet);
+                                        res.data[i].callMoney = convertNumber((bet * Number(res.data[i].rtp)) / 100);
+                                        res.data[i].realCallMoney = convertNumber((bet * Number(res.data[i].rtp)) / 100  - res.data[i].missed);
+                                        
+                                        let typeArray = [0,`<span class="text-600 text-theme-1 leading-none mt-3"><%= __('calls.new_modal.call_type.common') %></span>`, `<span class="text-600 text-theme-6 leading-none mt-3"><%= __('calls.new_modal.call_type.buy') %></span>`]
+                                        res.data[i].type = typeArray[res.data[i].type];
+                                        // res.data[i].userPrev = convertNumber(res.data[i].userPrev);
+                                        // res.data[i].userAfter = convertNumber(res.data[i].userAfter);
+                                        res.data[i].agentPrev = convertNumber(res.data[i].agentPrev);
+                                        res.data[i].agentAfter = convertNumber(res.data[i].agentAfter);
+                                        res.data[i].missed = convertNumber(res.data[i].missed);
+
+                                        let callStatus = res.data[i].status;
+                                        if (callStatus == 0) {
+                                            res.data[i].status = `<span class="text-600 text-theme-12 leading-none mt-3"><%= __('calls.call_result_table.call_status.pending') %></span>`;
+                                        } else if (callStatus == 1) {
+                                            res.data[i].status = `<span class="text-600 text-theme-1 leading-none mt-3"><%= __('calls.call_result_table.call_status.processing') %></span>`;
+                                        } else if (callStatus == 2) {
+                                            res.data[i].status = `<span class="text-600 text-theme-9 leading-none mt-3"><%= __('calls.call_result_table.call_status.finished') %></span>`;
+                                        } else if (callStatus == 3) {
+                                            res.data[i].status = `<span class="text-600 text-theme-11 leading-none mt-3"><%= __('calls.call_result_table.call_status.rejected') %></span>`;
+                                        } else if (callStatus == 4) {
+                                            res.data[i].status = `<span class="text-600 text-theme-6 leading-none mt-6"><%= __('calls.call_result_table.call_status.canceled') %></span>`;
+                                        }
+
+                                        if (callStatus == 0) {
+                                            res.data[i].action = `<button type="button" id="btn-call-cancel" class="button button--sm inline-block  border border-theme-6 text-theme-6 dark:border-theme-10 dark:text-theme-10 mr-1" onclick="handleCallCancel('${res.data[i].id}')"><%= __('calls.call_result_table.cancel') %></button>`;
+                                        } else {
+                                            res.data[i].action = "";
+                                        }
+                                    }
+
+                                    $("#total-calls-history").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function intervalData() {
+                drawPlayingUsers();
+                drawCallResult();
+            }
+
+            drawPlayingUsers();
+            drawCallResult();
+
+            setInterval(intervalData, 5000);
+        </script>
+    </body>
+</html>

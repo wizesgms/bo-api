@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('agents.page_title')}) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('agents.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10"> <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %> </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div>
+                                    <div class="col-12">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <div class="card-header flex justify-between items-center">
+                                                    <div style="font-size: 14px">
+                                                        <span><%= __('agents.table_title') %></span>
+                                                        <span id="agent-count">(0)</span>
+                                                    </div>
+                                                    <button id="new-agent-show" class="button flex items-center justify-center bg-theme-1 text-white"><i data-feather="plus-circle" class="w-4 h-4 mr-2"></i> <%= __('agents.create') %></button>
+                                                </div>
+                                                <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                                <div class="card-body">
+                                                    <div>
+                                                        <div class="mt-2 mb-2">
+                                                            <div class="float-left">
+                                                                <button class="button button--sm w-24 mr-1 border text-gray-700 dark:bg-dark-5 dark:text-gray-300" onclick="expandTreeTable()"><%= __('agents.expand_all') %></button>
+                                                                <button class="button button--sm w-24 mr-1 border text-gray-700 dark:bg-dark-5 dark:text-gray-300" onclick="collapseTreeTable()"><%= __('agents.collapse_all') %></button>
+                                                            </div>
+                                                            <div class="float-right">
+                                                                <input type="text" class="input input--sm w-full border" id="agent-search" placeholder="Search" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <div class="table-scrollable">
+                                                                <div class="table-responsive">
+                                                                    <table id="agent-treetable" class="table table-striped table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th><%= __('agents.table.agent_code') %></th>
+                                                                                <th><%= __('agents.table.agent_name') %></th>
+                                                                                <th><%= __('agents.table.memo') %></th>
+                                                                                <% if (session.auth.role == 1) { %>
+                                                                                <th style="width: 120px"><%= __('agents.table.admin_memo') %></th>
+                                                                                <% } %>
+                                                                                <th><%= __('agents.table.type') %></th>
+                                                                                <th><%= __('agents.table.api_type') %></th>
+                                                                                <th><%= __('agents.table.balance') %></th>
+                                                                                <th><%= __('agents.table.percent') %></th>
+                                                                                <th><%= __('agents.table.child_agent_balance_sum') %></th>
+                                                                                <th><%= __('agents.table.child_user_balance_sum') %></th>
+                                                                                <% if (session.auth.role == 1) { %>
+                                                                                <th><%= __('agents.table.currency') %></th>
+                                                                                <% } %>
+                                                                                <th><%= __('agents.table.created_at') %></th>
+                                                                                <th style="width: 70px"><%= __('agents.table.account_status') %></th>
+                                                                                <th style="width: 200px"><%= __('agents.table.action') %></th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="agent-table-content"></tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- new agent modal -->
+                                <div class="modal" id="new-agent-modal">
+                                    <div class="modal__content modal__content--xl">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto"><%= __('agents.new_modal.title') %></h2>
+                                        </div>
+                                        <form id="new-agent-form" class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.parent_agent') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-parent-id"></select>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.agent_name') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="new-agent-name" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.agent_code') %></label>
+                                                <div class="relative mt-1">
+                                                    <input type="text" class="input pr-12 w-full border col-span-4" id="new-agent-code" placeholder="<%= __('agents.new_modal.agent_code.placeholder') %>" />
+                                                    <button type="button" id="new-agent-check-code" class="absolute top-0 right-0 rounded-r h-full flex items-center justify-center bg-theme-1 text-white px-2" style="outline: none !important"><%= __('agents.new_modal.confirm_duplication') %></button>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.password') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="new-agent-password" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.percent') %></label>
+                                                <input type="number" class="input w-full border mt-1 flex-1" min="0" max="100" step="1" id="new-agent-percent" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.ip') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" placeholder="127.0.0.1" id="new-agent-ip" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.memo') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="new-agent-memo" />
+                                            </div>
+                                            <% if (session.auth.role == 1) { %>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.admin_memo') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="new-agent-admin-memo" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.currency') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-currency"></select>
+                                            </div>
+                                            <% } %>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.agent_type') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-type">
+                                                    <option value="3"><%= __('agents.new_modal.agent_type.parallel') %></option>
+                                                    <option value="1"><%= __('agents.new_modal.agent_type.distribution') %></option>
+                                                    <option value="2"><%= __('agents.new_modal.agent_type.run') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6" id="new-agent-api-wrapper">
+                                                <label><%= __('agents.new_modal.api_type') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-api">
+                                                    <option value="1"><%= __('agents.new_modal.api_type.transfer') %></option>
+                                                    <option value="0"><%= __('agents.new_modal.api_type.seamless') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6" id="new-agent-endpoint-wrapper" style="display: none">
+                                                <label><%= __('agents.new_modal.site_endpoint') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="new-agent-endpoint" placeholder="https://example.com (Do not input '/gold_api')" />
+                                            </div>
+                                            <% if (session.auth.role == 1) { %>
+                                            <div class="col-span-12" style="display: flex; align-items: center; gap: 10px">
+                                                <hr style="width: 100%" />
+                                                <span style="width: 300px; text-align: center"><%= __('agents.new_modal.slot_configuration') %></span>
+                                                <hr style="width: 100%" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.currency_symbol') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-currency-symbol">
+                                                    <option value="1"><%= __('agents.new_modal.currency_symbol.show') %></option>
+                                                    <option value="0"><%= __('agents.new_modal.currency_symbol.hide') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.set_zero_betting') %></label>
+                                                <div style="display: flex; align-items: center">
+                                                    <input type="number" class="input border mt-1 flex-1 w-50" value="100" id="new-agent-zero-total" />
+                                                    &nbsp;<%= __('agents.new_modal.set_zero_betting.zero_total') %>&nbsp;
+                                                    <input type="number" class="input border mt-1 flex-1 w-50" value="0" id="new-agent-zero-count" />
+                                                    &nbsp;<%= __('agents.new_modal.set_zero_betting.zero_count') %>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.bet_edited') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-bet-edited">
+                                                    <option value="0"><%= __('agents.new_modal.bet_edited.no') %></option>
+                                                    <option value="1"><%= __('agents.new_modal.bet_edited.yes') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6" style="display: none" id="new-agent-bet-range-wrapper">
+                                                <label><%= __('agents.new_modal.bet_range') %></label>
+                                                <div style="display: flex; align-items: center">
+                                                    <input type="number" class="input border mt-1 flex-1 w-50" placeholder="" value="" id="new-agent-bet-min" />
+                                                    &nbsp;~&nbsp;
+                                                    <input type="number" class="input border mt-1 flex-1 w-50" placeholder="" value="" id="new-agent-bet-max" />
+                                                </div>
+                                            </div>
+                                            <div class="col-span-12" style="display: flex; align-items: center; gap: 10px">
+                                                <hr style="width: 100%" />
+                                                <span style="width: 400px; text-align: center"><%= __('agents.new_modal.live_configuration') %></span>
+                                                <hr style="width: 100%" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.block_opposite_bet') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-block-opposite-bet">
+                                                    <option value="0"><%= __('agents.new_modal.block_opposite_bet.no') %></option>
+                                                    <option value="1"><%= __('agents.new_modal.block_opposite_bet.yes') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.block_red_envelope') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-block-red-envelope">
+                                                    <option value="0"><%= __('agents.new_modal.block_red_envelope.no') %></option>
+                                                    <option value="1"><%= __('agents.new_modal.block_red_envelope.yes') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.new_modal.bet_limit_skin') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-bet-limit-skin">
+                                                    <option value="SKIN1">Skin 1</option>
+                                                    <option value="SKIN2">Skin 2</option>
+                                                </select>
+                                            </div>
+                                            <% } %>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button type="button" data-dismiss="modal" class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"><%= __('agents.new_modal.cancel') %></button>
+                                            <button type="button" class="button w-20 bg-theme-1 text-white" id="new-agent-confirm"><%= __('agents.new_modal.create') %></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- update agent modal -->
+                                <div class="modal" id="update-agent-modal">
+                                    <div class="modal__content modal__content--xl">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto"><%= __('agents.update_modal.title') %></h2>
+                                        </div>
+                                        <form id="update-agent-form" class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                            <input type="text" id="update-agent-id" style="display: none" />
+
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.parent_agent') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="update-agent-parent-id" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.agent_name') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="update-agent-name" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.agent_code') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="update-agent-code" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.password') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="update-agent-password" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.agent_token') %></label>
+                                                <div class="relative mt-1">
+                                                    <input type="text" class="input pr-12 w-full border col-span-4" id="update-agent-token" readonly="" />
+                                                    <button type="button" id="copy-agent-token" class="absolute top-0 right-0 rounded-r h-full flex items-center justify-center bg-theme-1 text-white px-2 copy-button" style="outline: none !important" data-clipboard-target="#update-agent-token"><%= __('agents.update_modal.copy') %></button>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.agent_secret_key') %></label>
+                                                <div class="relative mt-1">
+                                                    <input type="text" class="input pr-12 w-full border col-span-4" id="update-agent-secret-key" readonly="" />
+                                                    <button type="button" id="copy-agent-secret-key" class="absolute top-0 right-0 rounded-r h-full flex items-center justify-center bg-theme-1 text-white px-2 copy-button" style="outline: none !important" data-clipboard-target="#update-agent-secret-key"><%= __('agents.update_modal.copy') %></button>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.percent') %></label>
+                                                <input type="number" class="input w-full border mt-1 flex-1" min="0" max="100" step="1" id="update-agent-percent" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.ip') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="update-agent-ip" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.memo') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="update-agent-memo" />
+                                            </div>
+                                            <% if (session.auth.role == 1) { %>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.admin_memo') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="update-agent-admin-memo" />
+                                            </div>
+                                            <% } %>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.agent_type') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="update-agent-type">
+                                                    <option value="1"><%= __('agents.new_modal.agent_type.distribution') %></option>
+                                                    <option value="2"><%= __('agents.new_modal.agent_type.run') %></option>
+                                                    <option value="3"><%= __('agents.new_modal.agent_type.parallel') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6" id="update-agent-api-wrapper" style="display: none">
+                                                <label><%= __('agents.update_modal.api_type') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="update-agent-api">
+                                                    <option value="1"><%= __('agents.new_modal.api_type.transfer') %></option>
+                                                    <option value="0"><%= __('agents.new_modal.api_type.seamless') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6" id="update-agent-endpoint-wrapper" style="display: none">
+                                                <label><%= __('agents.update_modal.site_endpoint') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="update-agent-endpoint" />
+                                            </div>
+                                            <% if (session.auth.role == 1) { %>
+                                            <div class="col-span-12" style="display: flex; align-items: center; gap: 10px">
+                                                <hr style="width: 100%" />
+                                                <span style="width: 300px; text-align: center"><%= __('agents.udpate_modal.slot_configuration') %></span>
+                                                <hr style="width: 100%" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.currency_symbol') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="update-agent-currency-symbol">
+                                                    <option value="1"><%= __('agents.update_modal.currency_symbol.show') %></option>
+                                                    <option value="0"><%= __('agents.update_modal.currency_symbol.hide') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.set_zero_betting') %></label>
+                                                <div style="display: flex; align-items: center">
+                                                    <input type="number" class="input border mt-1 flex-1 w-50" id="update-agent-zero-total" />
+                                                    &nbsp;<%= __('agents.update_modal.set_zero_betting.zero_total') %>&nbsp;
+                                                    <input type="number" class="input border mt-1 flex-1 w-50" id="update-agent-zero-count" />
+                                                    &nbsp;<%= __('agents.update_modal.set_zero_betting.zero_count') %>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.bet_edited') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="update-agent-bet-edited">
+                                                    <option value="0"><%= __('agents.update_modal.bet_edited.no') %></option>
+                                                    <option value="1"><%= __('agents.update_modal.bet_edited.yes') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6" style="display: none" id="update-agent-bet-range-wrapper">
+                                                <label><%= __('agents.update_modal.bet_range') %></label>
+                                                <div style="display: flex; align-items: center">
+                                                    <input type="number" class="input border mt-1 flex-1 w-50" placeholder="" id="update-agent-bet-min" />
+                                                    &nbsp;~&nbsp;
+                                                    <input type="number" class="input border mt-1 flex-1 w-50" placeholder="" id="update-agent-bet-max" />
+                                                </div>
+                                            </div>
+                                            <div class="col-span-12" style="display: flex; align-items: center; gap: 10px">
+                                                <hr style="width: 100%" />
+                                                <span style="width: 400px; text-align: center"><%= __('agents.udpate_modal.live_configuration') %></span>
+                                                <hr style="width: 100%" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.block_opposite_bet') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="update-agent-block-opposite-bet">
+                                                    <option value="0"><%= __('agents.update_modal.block_opposite_bet.no') %></option>
+                                                    <option value="1"><%= __('agents.update_modal.block_opposite_bet.yes') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.block_red_envelope') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="update-agent-block-red-envelope">
+                                                    <option value="0"><%= __('agents.update_modal.block_red_envelope.no') %></option>
+                                                    <option value="1"><%= __('agents.update_modal.block_red_envelope.yes') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.update_modal.bet_limit_skin') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="update-agent-bet-limit-skin">
+                                                    <option value="SKIN1">Skin 1</option>
+                                                    <option value="SKIN2">Skin 2</option>
+                                                </select>
+                                            </div>
+                                            <% } %>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button type="button" data-dismiss="modal" class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"><%= __('agents.update_modal.cancel') %></button>
+                                            <button type="button" class="button w-20 bg-theme-1 text-white" id="update-agent-confirm"><%= __('agents.update_modal.confirm') %></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- detail agent modal -->
+                                <div class="modal" id="detail-agent-modal">
+                                    <div class="modal__content modal__content--xl">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto"><%= __('agents.detail_modal.title') %></h2>
+                                        </div>
+                                        <form id="detail-agent-form" class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.parent_agent') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-parent-id" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.agent_name') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-name" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.agent_code') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-code" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.password') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-password" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.agent_token') %></label>
+                                                <div class="relative mt-1">
+                                                    <input type="text" class="input pr-12 w-full border col-span-4" id="detail-agent-token" readonly="" />
+                                                    <button type="button" id="copy-agent-token" class="absolute top-0 right-0 rounded-r h-full flex items-center justify-center bg-theme-1 text-white px-2 copy-button" style="outline: none !important" data-clipboard-target="#detail-agent-token"><%= __('agents.detail_modal.copy') %></button>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.agent_secret_key') %></label>
+                                                <div class="relative mt-1">
+                                                    <input type="text" class="input pr-12 w-full border col-span-4" id="detail-agent-secret-key" readonly="" />
+                                                    <button type="button" id="copy-agent-secret-key" class="absolute top-0 right-0 rounded-r h-full flex items-center justify-center bg-theme-1 text-white px-2 copy-button" style="outline: none !important" data-clipboard-target="#detail-agent-secret-key"><%= __('agents.detail_modal.copy') %></button>
+                                                </div>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.percent') %></label>
+                                                <input type="number" class="input w-full border mt-1 flex-1" readonly="" id="detail-agent-percent" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.ip') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-ip" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.memo') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-memo" readonly="" />
+                                            </div>
+                                            <% if (session.auth.role == 1) { %>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.admin_memo') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-admin-memo" readonly="" />
+                                            </div>
+                                            <% } %>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.agent_type') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-type" readonly="" />
+                                            </div>
+                                            <div class="col-span-6" id="detail-agent-api-wrapper" style="display: none">
+                                                <label><%= __('agents.detail_modal.api_type') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-api" readonly="" />
+                                            </div>
+                                            <div class="col-span-6" id="detail-agent-endpoint-wrapper" style="display: none">
+                                                <label><%= __('agents.detail_modal.site_endpoint') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-endpoint" readonly="" />
+                                            </div>
+                                            <% if (session.auth.role == 1) { %>
+                                            <div class="col-span-12" style="display: flex; align-items: center; gap: 10px">
+                                                <hr style="width: 100%" />
+                                                <span style="width: 400px; text-align: center"><%= __('agents.detail_modal.slot_configuration') %></span>
+                                                <hr style="width: 100%" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.currency_symbol') %></label>
+                                                <input class="input w-full border mt-1 flex-1" id="detail-agent-currency-symbol" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.set_zero_betting') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-zero" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.bet_edited') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-bet-edited" readonly="" />
+                                            </div>
+                                            <div class="col-span-6" style="display: none" id="detail-agent-bet-range-wrapper">
+                                                <label><%= __('agents.detail_modal.bet_range') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-bet-range" readonly="" />
+                                            </div>
+                                            <div class="col-span-12" style="display: flex; align-items: center; gap: 10px">
+                                                <hr style="width: 100%" />
+                                                <span style="width: 300px; text-align: center"><%= __('agents.detail_modal.live_configuration') %></span>
+                                                <hr style="width: 100%" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.block_opposite_bet') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-block-opposite-bet" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.block_red_envelope') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-block-red-envelope" readonly="" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.detail_modal.bet_limit_skin') %></label>
+                                                <input type="text" class="input w-full border mt-1 flex-1" id="detail-agent-bet-limit-skin" readonly="" />
+                                            </div>
+                                            <% } %>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button type="button" data-dismiss="modal" class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"><%= __('agents.detail_modal.close') %></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- exchange modal -->
+                                <div class="modal" id="exchange-modal">
+                                    <div class="modal__content">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto"><%= __('agents.exchange_modal.title') %></h2>
+                                        </div>
+                                        <form id="exchange-form" class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                            <input type="text" id="exchange-agent-id" style="display: none" />
+
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.exchange_modal.money') %></label>
+                                                <input type="number" class="input w-full border mt-1 flex-1" id="exchange-money" min="0" value="0" />
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label><%= __('agents.exchange_modal.type') %></label>
+                                                <select class="input w-full border mt-1 flex-1" id="exchange-type">
+                                                    <option value="1"><%= __('agents.exchange_modal.type.money_deposit') %></option>
+                                                    <option value="0"><%= __('agents.exchange_modal.type.money_withdraw') %></option>
+                                                </select>
+                                            </div>
+
+                                            <% if (session.auth.lang == "ko"){ %>
+                                            <div class="col-span-2">
+                                                <button type="button" class="button button--sm w-full mt-2 inline-block border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10" onclick="handleExchangeMoney(50000000)"><%= __('agents.exchange_modal.fifty_millions') %></button>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <button type="button" class="button button--sm w-full mt-2 inline-block border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10" onclick="handleExchangeMoney(100000000)"><%= __('agents.exchange_modal.one_hundred_millions') %></button>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <button type="button" class="button button--sm w-full mt-2 inline-block border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10" onclick="handleExchangeMoney(200000000)"><%= __('agents.exchange_modal.two_hundreds_millions') %></button>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <button type="button" class="button button--sm w-full mt-2 inline-block border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10" onclick="handleExchangeMoney(500000000)"><%= __('agents.exchange_modal.five_hundreds_millions') %></button>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <button type="button" class="button button--sm w-full mt-2 inline-block border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10" onclick="handleExchangeMoney(1000000000)"><%= __('agents.exchange_modal.one_thousand_millions') %></button>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <button type="button" class="button button--sm w-full mt-2 inline-block border border-theme-6 text-theme-6 dark:border-theme-6" onclick="handleExchangeMoney(0)"><%= __('agents.exchange_modal.clear') %></button>
+                                            </div>
+                                            <% } %>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button type="button" data-dismiss="modal" class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"><%= __('agents.exchange_modal.cancel') %></button>
+                                            <button type="button" class="button w-20 bg-theme-1 text-white" id="exchange-confirm"><%= __('agents.exchange_modal.confirm') %></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            $("#menu-2").addClass("side-menu--active");
+            $("#menu-2 + ul").addClass("side-menu__sub-open");
+
+            const sessionAgentId = `<%= session.auth.id %>`;
+            const sessionAgentRole = `<%= session.auth.role %>`;
+            const sessionAgentCurrency = `<%= session.auth.currency %>`;
+
+            const agentTypeString = {
+                1: { title: "<%= __('agents.distribution') %>", color: "text-theme-6", desc: "<%= __('agents.distribution.description') %>" },
+                2: { title: "<%= __('agents.run') %>", color: "text-theme-1", desc: "<%= __('agents.run.description') %>" },
+                3: { title: "<%= __('agents.parallel') %>", color: "text-theme-9", desc: "<%= __('agents.parallel.description') %>" },
+            };
+
+            const apiTypeString = {
+                0: { title: "S", color: "text-theme-6", desc: "<%= __('agents.seamless_mode') %>" },
+                1: { title: "T", color: "text-theme-9", desc: "<%= __('agents.transfer_mode') %>" },
+            };
+
+            const curShowString = {
+                0: { desc: "<%= __('agents.new_modal.currency_symbol.hide') %>" },
+                1: { desc: "<%= __('agents.new_modal.currency_symbol.show') %>" },
+            };
+
+            const betEditedString = {
+                0: { desc: "<%= __('agents.new_modal.bet_edited.no') %>" },
+                1: { desc: "<%= __('agents.new_modal.bet_edited.yes') %>" },
+            };
+
+            const blockOppositeBetString = {
+                0: { desc: "<%= __('agents.new_modal.block_opposite_bet.no') %>" },
+                1: { desc: "<%= __('agents.new_modal.block_opposite_bet.yes') %>" },
+            };
+
+            const blockRedEnvelopeString = {
+                0: { desc: "<%= __('agents.new_modal.block_red_envelope.no') %>" },
+                1: { desc: "<%= __('agents.new_modal.block_red_envelope.yes') %>" },
+            };
+
+            const betLimitSkinString = {
+                SKIN1: "Skin 1",
+                SKIN2: "Skin 2",
+            }
+
+            let currencyInfo = [];
+            let curMulti = 1;
+
+            let tbodyHtml = "";
+            let isChecked = false;
+            let count = 0;
+
+            const clipboard = new ClipboardJS(".copy-button");
+
+            clipboard.on("success", function (e) {
+                showToast("success", e.text);
+                e.clearSelection();
+            });
+
+            clipboard.on("error", function (e) {
+                showToast("error", e.text);
+            });
+
+            function init() {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/currency",
+                    success: function (res) {
+                        if (res.status) {
+                            currencyInfo = res.currencies;
+                            curMulti = currencyInfo.find((currency) => currency.code == sessionAgentCurrency).config.initRate;
+                            const currencies = res.currencies;
+                            let currencyOptionHtml = "";
+                            for (const currency of currencies) {
+                                currencyOptionHtml += `<option value="${currency.code}">${currency.code}</option>`;
+                            }
+                            if (sessionAgentRole == 1) {
+                                $("#new-agent-currency").html(currencyOptionHtml);
+                            }
+                        }
+                    },
+                });
+            }
+
+            function drawTable() {
+                tbodyHtml = "";
+                count = 0;
+
+                $.ajax({
+                    type: "GET",
+                    url: `/api/agent/tree?search=${$("#agent-search").val()}`,
+                    success: function (res) {
+                        if (res.status) {
+                            sortAgents(res.agents, 0);
+
+                            $("#agent-count").html(`(${count})`);
+
+                            $("#agent-table-content").html(tbodyHtml);
+
+                            $("#agent-treetable").treetable("destroy");
+                            $("#agent-treetable").treetable({ expandable: true });
+                            $("#agent-treetable").treetable("expandAll");
+                        }
+                    },
+                });
+            }
+
+            function sortAgents(agents, parentId) {
+                for (let i = 0; i < agents.length; i++) {
+                    const agent = agents[i];
+
+                    tbodyHtml += `<tr data-tt-id="node_${agent.id}" data-tt-parent-id="node_${parentId}">`;
+                    tbodyHtml += `<td class="text-left agent-level-${agent.depth}">[${agent.depth}] ${agent.agentCode}</td>`;
+                    tbodyHtml += `<td>${agent.agentName}</td>`;
+                    tbodyHtml += `<td>${convertString(agent.memo, 10)}</td>`;
+
+                    if (sessionAgentRole == 1) {
+                        tbodyHtml += `<td>${agent.adminMemo}</td>`;
+                    }
+
+                    tbodyHtml += `<td class="${agentTypeString[agent.agentType].color}">${agentTypeString[agent.agentType].title}</td>`;
+
+                    if (agent.agentType == 1) {
+                        tbodyHtml += `<td></td>`;
+                    } else {
+                        tbodyHtml += `<td class="${apiTypeString[agent.apiType].color}">${apiTypeString[agent.apiType].title}</td>`;
+                    }
+
+                    tbodyHtml += `<td>${convertNumber(agent.balance, "<%= session.locale %>")}</td>`;
+                    tbodyHtml += `<td>${agent.percent} %</td>`;
+                    tbodyHtml += `<td>${convertNumber(agent.childAgentBalanceSum, "<%= session.locale %>")}</td>`;
+                    tbodyHtml += `<td>${convertNumber(agent.childUserBalanceSum, "<%= session.locale %>")}</td>`;
+                    if (sessionAgentRole == 1) {
+                        tbodyHtml += `<td>${agent.currency}</td>`;
+                    }
+                    tbodyHtml += `<td>${convertDate(agent.createdAt)}</td>`;
+                    tbodyHtml += `<td><input type="checkbox" id="btn-change" class="input input--sm input--switch border" ${agent.status == 1 ? `checked="checked"` : ``} onclick="handleChangeStatus(${agent.id}, ${agent.status})"></td>`;
+                    tbodyHtml += `<td>`;
+                    if (sessionAgentId != agent.id) {
+                        tbodyHtml += `<button class="button button--sm inline-block border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10 mr-1" onclick="handleExchange(${agent.id})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card" class="lucide lucide-credit-card block mx-auto"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></button>`;
+                    }
+                    tbodyHtml += `<button class="button button--sm inline-block border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1" id="btn-create-child-agent" onclick="handleCreateChildAgent(${agent.id}, ${agent.agentType}, '${agent.currency}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="plus" data-lucide="plus" class="lucide lucide-plus block mx-auto"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>`;
+                    tbodyHtml += `<button class="button button--sm inline-block border border-theme-9 text-theme-9 dark:border-theme-9 dark:text-theme-9 mr-1" onclick="handleDetailAgent(${agent.id})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="eye" data-lucide="eye" class="lucide lucide-eye block mx-auto"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>`;
+                    tbodyHtml += `<button class="button button--sm inline-block border border-theme-12 text-theme-12 dark:border-theme-12 dark:text-theme-12 mr-1" onclick="handleUpdateAgent(${agent.id})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="edit" data-lucide="edit" class="lucide lucide-edit block mx-auto"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>`;
+                    if (sessionAgentId != agent.id) {
+                        tbodyHtml += `<button class="button button--sm inline-block border border-theme-6 text-theme-6 dark:border-theme-6 dark:text-theme-6" onclick="handleDeleteAgent(${agent.id})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="trash" data-lucide="trash" class="lucide lucide-trash block mx-auto"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>`;
+                    }
+                    tbodyHtml += `</td>`;
+                    tbodyHtml += `</tr>`;
+
+                    count++;
+
+                    if (agent.children && agent.children.length > 0) {
+                        sortAgents(agent.children, agent.id);
+                    }
+                }
+            }
+
+            function expandTreeTable() {
+                $("#agent-treetable").treetable("expandAll");
+            }
+
+            function collapseTreeTable() {
+                $("#agent-treetable").treetable("collapseAll");
+            }
+
+            function validateCode(data) {
+                if (data.agentCode == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_agent_code') %>");
+                    $("#new-agent-code").focus();
+                    return false;
+                }
+
+                return true;
+            }
+
+            function validateCreate(data) {
+                if (data.parentId == "") {
+                    showToast("warning", "<%= __('agents.message.please_select_parent_agent') %>");
+                    $("#new-agent-parent-id").focus();
+                    return false;
+                }
+
+                if (data.agentName == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_agent_name') %>");
+                    $("#new-agent-name").focus();
+                    return false;
+                }
+
+                if (data.agentCode == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_agent_code') %>");
+                    $("#new-agent-code").focus();
+                    return false;
+                }
+
+                if (data.password == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_password') %>");
+                    $("#new-agent-password").focus();
+                    return false;
+                }
+
+                if (data.percent == "" || data.percent < 0 || data.percent > 100) {
+                    showToast("warning", "<%= __('agents.message.please_check_up_percent') %>");
+                    $("#new-agent-percent").focus();
+                    return false;
+                }
+
+                if (data.agentType == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_agent_type') %>");
+                    $("#new-agent-type").focus();
+                    return false;
+                }
+
+                if (!isChecked) {
+                    showToast("warning", "<%= __('agents.message.please_check_up_id_duplication') %>");
+                    $("#new-agent-code").focus();
+                    return false;
+                }
+
+                if ((data.agentType == 2 || data.agentType == 3) && data.apiType == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_api_type') %>");
+                    $("#new-agent-api").focus();
+                    return false;
+                }
+
+                if (data.apiType == 0 && (data.siteEndPoint == "" || data.siteEndPoint.endsWith("/gold_api"))) {
+                    showToast("warning", "<%= __('agents.message.please_check_up_site_endpoint') %>");
+                    $("#new-agent-endpoint").focus();
+                    return false;
+                }
+
+                if (data.betEdited == 1 && data.minBet == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_min_bet') %>");
+                    $("#new-agent-minBet").focus();
+                    return false;
+                }
+
+                if (data.betEdited == 1 && data.maxBet == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_max_bet') %>");
+                    $("#new-agent-maxBet").focus();
+                    return false;
+                }
+
+                return true;
+            }
+
+            function validateUpdate(data) {
+                if (data.percent == "" || data.percent < 0 || data.percent > 100) {
+                    showToast("warning", "<%= __('agents.message.please_check_up_agent_percent') %>");
+                    $("#update-agent-percent").focus();
+                    return false;
+                }
+
+                if (data.password == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_agent_code') %>");
+                    $("#update-agent-password").focus();
+                    return false;
+                }
+
+                if (data.status == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_agent_status') %>");
+                    $("#update-agent-status").focus();
+                    return false;
+                }
+
+                if (data.apiType == 0 && (data.siteEndPoint == "" || data.siteEndPoint.endsWith("/gold_api"))) {
+                    showToast("warning", "<%= __('agents.message.please_check_up_site_endpoint') %>");
+                    $("#update-agent-status").focus();
+                    return false;
+                }
+
+                if (data.betEdited == 1 && data.minBet == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_min_bet') %>");
+                    $("#new-agent-minBet").focus();
+                    return false;
+                }
+
+                if (data.betEdited == 1 && data.maxBet == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_max_bet') %>");
+                    $("#new-agent-maxBet").focus();
+                    return false;
+                }
+
+                return true;
+            }
+
+            function validateExchange(data) {
+                if (data.amount == "" || data.amount <= 0) {
+                    showToast("warning", "<%= __('agents.message.please_check_up_money_value') %>");
+                    $("#exchange-money").focus();
+                    return false;
+                }
+
+                if (data.chargeType == "") {
+                    showToast("warning", "<%= __('agents.message.please_check_up_exchange_type') %>");
+                    $("#exchange-type").focus();
+                    return false;
+                }
+
+                return true;
+            }
+
+            function handleChangeStatus(id, status) {
+                const requestData = {
+                    status: status == 0 ? 1 : 0,
+                };
+
+                $("#btn-change").attr("disabled", true);
+
+                $.ajax({
+                    type: "PUT",
+                    url: `/api/agent/${id}`,
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('common.operated_successfully') %>");
+                            drawTable();
+                        }
+                        $("#btn-change").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#btn-change").removeAttr("disabled");
+                    },
+                });
+            }
+
+            function handleDeleteAgent(id) {
+                showConfirmAlert("<%= __('agents.message.do_you_delete_this_agent') %>", function () {
+                    $.ajax({
+                        type: "DELETE",
+                        url: `/api/agent/${id}`,
+                        success: function (res) {
+                            if (res.status) {
+                                showToast("success", "<%= __('common.operated_successfully') %>");
+                                drawTable();
+                            }
+                        },
+                    });
+                });
+            }
+
+            function handleUpdateAgent(id) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/agent/${id}`,
+                    success: function (res) {
+                        if (res.status) {
+                            const agent = res.agent;
+
+                            resetForm("update-agent-form");
+
+                            $("#update-agent-id").val(agent.id);
+                            $("#update-agent-parent-id").val(agent.parent ? agent.parent.agentCode : "");
+                            $("#update-agent-name").val(agent.agentName);
+                            $("#update-agent-code").val(agent.agentCode);
+                            $("#update-agent-token").val(agent.token);
+                            $("#update-agent-secret-key").val(agent.secretKey);
+                            $("#update-agent-password").val(agent.password);
+                            $("#update-agent-percent").val(agent.percent);
+                            $("#update-agent-ip").val(agent.ipAddress);
+                            $("#update-agent-memo").val(agent.memo);
+                            $("#update-agent-admin-memo").val(agent.adminMemo);
+                            $("#update-agent-endpoint").val(agent.siteEndPoint);
+                            $("#update-agent-type").val(agent.agentType);
+                            $("#update-agent-api").val(agent.apiType);
+                            $("#update-agent-currency-symbol").val(agent.curShow);
+                            $("#update-agent-bet-edited").val(agent.betEdited);
+                            $("#update-agent-bet-min").val(agent.minBet);
+                            $("#update-agent-bet-max").val(agent.maxBet);
+                            $("#update-agent-bet-min").attr("placeholder", 0.2 * curMulti);
+                            $("#update-agent-bet-max").attr("placeholder", 100 * curMulti);
+                            $("#update-agent-block-opposite-bet").val(agent.blockOppositeBet);
+                            $("#update-agent-block-red-envelope").val(agent.blockRedEnvelope);
+                            $("#update-agent-bet-limit-skin").val(agent.betLimitSkin);
+
+                            if (agent.agentType == 1) {
+                                $("#update-agent-api-wrapper").hide();
+                            } else {
+                                $("#update-agent-api-wrapper").show();
+
+                                if (agent.apiType == 1) {
+                                    $("#update-agent-endpoint-wrapper").hide();
+                                } else {
+                                    $("#update-agent-endpoint-wrapper").show();
+                                }
+                            }
+
+                            if (agent.zeroSetting != "") {
+                                const zeroCount = agent.zeroSetting.split("/")[0];
+                                const zeroTotal = agent.zeroSetting.split("/")[1];
+
+                                $("#update-agent-zero-count").val(zeroCount);
+                                $("#update-agent-zero-total").val(zeroTotal);
+                            } else {
+                                $("#update-agent-zero-count").val(0);
+                                $("#update-agent-zero-total").val(100);
+                            }
+
+                            if (agent.betEdited == 1) {
+                                $("#update-agent-bet-range-wrapper").show();
+                            } else {
+                                $("#update-agent-bet-range-wrapper").hide();
+                            }
+
+                            cash("#update-agent-modal").modal("show");
+                        }
+                    },
+                });
+            }
+
+            function handleDetailAgent(id) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/agent/${id}`,
+                    success: function (res) {
+                        if (res.status) {
+                            const agent = res.agent;
+
+                            resetForm("detail-agent-form");
+
+                            $("#detail-agent-parent-id").val(agent.parent ? agent.parent.agentCode : "");
+                            $("#detail-agent-name").val(agent.agentName);
+                            $("#detail-agent-code").val(agent.agentCode);
+                            $("#detail-agent-token").val(agent.token);
+                            $("#detail-agent-secret-key").val(agent.secretKey);
+                            $("#detail-agent-password").val(agent.password);
+                            $("#detail-agent-percent").val(agent.percent);
+                            $("#detail-agent-ip").val(agent.ipAddress);
+                            $("#detail-agent-memo").val(agent.memo);
+                            $("#detail-agent-admin-memo").val(agent.adminMemo);
+                            $("#detail-agent-endpoint").val(agent.siteEndPoint);
+                            $("#detail-agent-type").val(`${agentTypeString[agent.agentType].title} (${agentTypeString[agent.agentType].desc})`);
+                            $("#detail-agent-api").val(`${apiTypeString[agent.apiType].title} (${apiTypeString[agent.apiType].desc})`);
+                            $("#detail-agent-currency-symbol").val(`${curShowString[agent.curShow].desc}`);
+                            $("#detail-agent-bet-edited").val(`${betEditedString[agent.betEdited].desc}`);
+                            $("#detail-agent-bet-range").val(`${agent.minBet} ~ ${agent.maxBet}`);
+                            $("#detail-agent-zero").val(agent.zeroSetting);
+                            $("#detail-agent-block-opposite-bet").val(`${blockOppositeBetString[agent.blockOppositeBet].desc}`);
+                            $("#detail-agent-block-red-envelope").val(`${blockRedEnvelopeString[agent.blockRedEnvelope].desc}`);
+                            $("#detail-agent-bet-limit-skin").val(`${betLimitSkinString[agent.betLimitSkin]}`);
+
+                            if (agent.agentType == 1) {
+                                $("#detail-agent-api-wrapper").hide();
+                                $("#detail-agent-endpoint-wrapper").hide();
+                            } else {
+                                $("#detail-agent-api-wrapper").show();
+
+                                if (agent.apiType == 1) {
+                                    $("#detail-agent-endpoint-wrapper").hide();
+                                } else {
+                                    $("#detail-agent-endpoint-wrapper").show();
+                                }
+                            }
+
+                            cash("#detail-agent-modal").modal("show");
+                        }
+                    },
+                });
+            }
+
+            function handleExchange(id) {
+                resetForm("exchange-form");
+                $("#exchange-agent-id").val(id);
+
+                cash("#exchange-modal").modal("show");
+            }
+
+            function handleExchangeMoney(amount) {
+                let exchangeMoney = $("#exchange-money").val();
+
+                if (amount == 0) {
+                    exchangeMoney = 0;
+                } else {
+                    exchangeMoney = Number(exchangeMoney) + amount;
+                }
+
+                $("#exchange-money").val(exchangeMoney);
+            }
+
+            function handleCreateChildAgent(agentId, agentType, currency) {
+                resetForm("new-agent-form");
+                $("#new-agent-endpoint-wrapper").hide();
+                if (sessionAgentRole == 1) {
+                    $("#new-agent-currency").val(currency);
+                    $("#new-agent-currency").prop("disabled", true);
+                }
+
+                isChecked = false;
+
+                if (agentType == 1 || agentType == 3) {
+                    $("#btn-create-child-agent").attr("disabled", true);
+
+                    $.ajax({
+                        type: "GET",
+                        url: `/api/agent/child/${agentId}`,
+                        success: function (res) {
+                            if (res.status) {
+                                const agents = res.child;
+
+                                let agentOptionHtml = "";
+
+                                for (let i = 0; i < agents.length; i++) {
+                                    agentOptionHtml += `<option value="${agents[i].id}">${agents[i].depth} - ${agents[i].agentCode}(${agents[i].agentName})</option>`;
+                                }
+
+                                $("#new-agent-parent-id").html(agentOptionHtml);
+
+                                cash("#new-agent-modal").modal("show");
+                            }
+
+                            $("#btn-create-child-agent").removeAttr("disabled");
+                        },
+                        error: function () {
+                            $("#btn-create-child-agent").removeAttr("disabled");
+                        },
+                    });
+                } else {
+                    showToast("warning", "<%= __('agents.message.cannot_create_child_agent') %>");
+                }
+            }
+
+            $("#agent-search").change(function () {
+                drawTable();
+            });
+
+            $("#new-agent-show").click(function () {
+                resetForm("new-agent-form");
+                $("#new-agent-endpoint-wrapper").hide();
+
+                isChecked = false;
+
+                $("#new-agent-show").attr("disabled", true);
+
+                $.ajax({
+                    type: "GET",
+                    url: `/api/agent/child/${sessionAgentId}`,
+                    success: function (res) {
+                        if (res.status) {
+                            const agents = res.child;
+
+                            let agentOptionHtml = "";
+                            for (let i = 0; i < agents.length; i++) {
+                                agentOptionHtml += `<option value="${agents[i].id}">${agents[i].depth} - ${agents[i].agentCode}(${agents[i].agentName})</option>`;
+                            }
+                            $("#new-agent-parent-id").html(agentOptionHtml);
+                            $("#new-agent-bet-min").attr("placeholder", 0.2 * curMulti);
+                            $("#new-agent-bet-max").attr("placeholder", 100 * curMulti);
+
+                            cash("#new-agent-modal").modal("show");
+                        }
+                        $("#new-agent-show").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#new-agent-show").removeAttr("disabled");
+                    },
+                });
+            });
+
+            $("#new-agent-type").change(function () {
+                const agentType = $(this).val();
+
+                if (agentType == 1) {
+                    $("#new-agent-api-wrapper").hide();
+                    $("#new-agent-endpoint-wrapper").hide();
+                } else if (agentType == 2 || agentType == 3) {
+                    $("#new-agent-api-wrapper").show();
+                    $("#new-agent-api").trigger("change");
+                }
+            });
+
+            $("#new-agent-api").change(function () {
+                const agentApi = $(this).val();
+
+                if (agentApi == 1) {
+                    $("#new-agent-endpoint-wrapper").hide();
+                } else {
+                    $("#new-agent-endpoint-wrapper").show();
+                }
+            });
+
+            $("#new-agent-check-code").click(function () {
+                const requestData = {
+                    agentCode: $("#new-agent-code").val(),
+                };
+
+                if (!validateCode(requestData)) {
+                    return;
+                }
+
+                $("#new-agent-check-code").attr("disabled", true);
+
+                $.ajax({
+                    type: "POST",
+                    url: `/api/agent/check`,
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            if (res.result) {
+                                isChecked = true;
+                                showToast("success", "<%= __('agents.message.this_is_usable_id') %>");
+                            } else {
+                                showToast("warning", "<%= __('agents.message.this_is_duplicated_id') %>");
+                            }
+                        }
+                        $("#new-agent-check-code").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#new-agent-check-code").removeAttr("disabled");
+                    },
+                });
+            });
+
+            $("#new-agent-confirm").click(function () {
+                const requestData = {
+                    parentId: $("#new-agent-parent-id").val(),
+                    agentName: $("#new-agent-name").val(),
+                    agentCode: $("#new-agent-code").val(),
+                    password: $("#new-agent-password").val(),
+                    percent: $("#new-agent-percent").val(),
+                    ipAddress: $("#new-agent-ip").val(),
+                    memo: $("#new-agent-memo").val(),
+                    adminMemo: $("#new-agent-admin-memo").val(),
+                    agentType: $("#new-agent-type").val(),
+                    curShow: $("#new-agent-currency-symbol").val(),
+                    betEdited: $("#new-agent-bet-edited").val() || 0,
+                    minBet: $("#new-agent-bet-min").val() || 0.2,
+                    maxBet: $("#new-agent-bet-max").val() || 100,
+                    blockOppositeBet: $("#new-agent-block-opposite-bet").val(),
+                    blockRedEnvelope: $("#new-agent-block-red-envelope").val(),
+                    betLimitSkin: $("#new-agent-bet-limit-skin").val(),
+                };
+
+                if (sessionAgentRole == 1) {
+                    requestData.currency = $("#new-agent-currency").val();
+                }
+
+                const zeroCount = $("#new-agent-zero-count").val();
+                const zeroTotal = $("#new-agent-zero-total").val();
+
+                if (Number(zeroCount) > 0 && Number(zeroTotal) > 0) {
+                    requestData.zeroSetting = `${zeroCount}/${zeroTotal}`;
+                }
+
+                if (requestData.agentType == 2 || requestData.agentType == 3) {
+                    requestData.apiType = $("#new-agent-api").val();
+                }
+
+                if (requestData.apiType == 0) {
+                    requestData.siteEndPoint = $("#new-agent-endpoint").val();
+                }
+
+                if (!validateCreate(requestData)) {
+                    return;
+                }
+
+                $("#new-agent-confirm").attr("disabled", true);
+
+                $.ajax({
+                    type: "POST",
+                    url: `/api/agent`,
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('common.operated_successfully') %>");
+                            drawTable();
+                            cash("#new-agent-modal").modal("hide");
+                        }
+                        $("#new-agent-confirm").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#new-agent-confirm").removeAttr("disabled");
+                    },
+                });
+            });
+
+            $("#update-agent-confirm").click(function () {
+                const requestData = {
+                    agentName: $("#update-agent-name").val(),
+                    agentType: $("#update-agent-type").val(),
+                    apiType: $("#update-agent-api").val(),
+                    password: $("#update-agent-password").val(),
+                    percent: $("#update-agent-percent").val(),
+                    ipAddress: $("#update-agent-ip").val(),
+                    memo: $("#update-agent-memo").val(),
+                    adminMemo: $("#update-agent-admin-memo").val(),
+                    siteEndPoint: $("#update-agent-endpoint").val(),
+                    curShow: $("#update-agent-currency-symbol").val(),
+                    betEdited: $("#update-agent-bet-edited").val(),
+                    minBet: $("#update-agent-bet-min").val(),
+                    maxBet: $("#update-agent-bet-max").val(),
+                    blockOppositeBet: $("#update-agent-block-opposite-bet").val(),
+                    blockRedEnvelope: $("#update-agent-block-red-envelope").val(),
+                    betLimitSkin: $("#update-agent-bet-limit-skin").val(),
+                };
+
+                const zeroCount = $("#update-agent-zero-count").val();
+                const zeroTotal = $("#update-agent-zero-total").val();
+
+                if (Number(zeroCount) > 0 && Number(zeroTotal) > 0) {
+                    requestData.zeroSetting = `${zeroCount}/${zeroTotal}`;
+                }
+
+                if (!validateUpdate(requestData)) {
+                    return;
+                }
+
+                $("#update-agent-confirm").attr("disabled", true);
+
+                $.ajax({
+                    type: "PUT",
+                    url: `/api/agent/${$("#update-agent-id").val()}`,
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('common.operated_successfully') %>");
+                            drawTable();
+                            cash("#update-agent-modal").modal("hide");
+                        }
+                        $("#update-agent-confirm").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#update-agent-confirm").removeAttr("disabled");
+                    },
+                });
+            });
+
+            $("#exchange-confirm").click(function () {
+                const requestData = {
+                    agentId: $("#exchange-agent-id").val(),
+                    chargeType: $("#exchange-type").val(),
+                    amount: $("#exchange-money").val(),
+                };
+
+                if (!validateExchange(requestData)) {
+                    return;
+                }
+
+                $("#exchange-confirm").attr("disabled", true);
+
+                $.ajax({
+                    type: "POST",
+                    url: `/api/agent/exchange`,
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('common.operated_successfully') %>");
+                            getBalanceInfo();
+                            drawTable();
+
+                            cash("#exchange-modal").modal("hide");
+                        }
+                        $("#exchange-confirm").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#exchange-confirm").removeAttr("disabled");
+                    },
+                });
+            });
+
+            $("#new-agent-parent-id").change(function () {
+                if (sessionAgentRole == 1) {
+                    const parentId = this.value;
+                    if (parentId == 1) {
+                        $("#new-agent-currency").prop("disabled", false);
+                    } else {
+                        $.ajax({
+                            type: "GET",
+                            url: `/api/agent/${parentId}`,
+                            success: function (res) {
+                                if (res.status) {
+                                    const agent = res.agent;
+                                    $("#new-agent-currency").val(agent.currency);
+                                }
+                            },
+                        });
+                        $("#new-agent-currency").prop("disabled", true);
+                    }
+                }
+            });
+
+            $("#update-agent-type").change(function () {
+                const selected = $(this).val();
+
+                if (selected == 1) {
+                    $("#update-agent-api-wrapper").hide();
+                    $("#update-agent-endpoint-wrapper").hide();
+                } else {
+                    $("#update-agent-api-wrapper").show();
+                    $("#update-agent-api").trigger("change");
+                }
+            });
+
+            $("#update-agent-api").change(function () {
+                const selected = $(this).val();
+
+                if (selected == 1) {
+                    $("#update-agent-endpoint-wrapper").hide();
+                } else {
+                    $("#update-agent-endpoint-wrapper").show();
+                }
+            });
+
+            $("#new-agent-bet-edited").change(function () {
+                if (this.value == 1) {
+                    $("#new-agent-bet-range-wrapper").show();
+                } else {
+                    $("#new-agent-bet-range-wrapper").hide();
+                }
+            });
+
+            $("#update-agent-bet-edited").change(function () {
+                if (this.value == 1) {
+                    $("#update-agent-bet-range-wrapper").show();
+                } else {
+                    $("#update-agent-bet-range-wrapper").hide();
+                }
+            });
+
+            init();
+            drawTable();
+        </script>
+    </body>
+</html>

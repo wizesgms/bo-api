@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('user.page_title') }) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('user.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div>
+                                    <div class="col-12">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <div class="card-header flex justify-between items-center">
+                                                    <div style="font-size: 14px">
+                                                        <span><%= __('user.table_title') %></span>
+                                                        <span id="total-users-count">(0)</span>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row items-center">
+                                                        <select class="input min-width border" onchange="drawTable()" id="agent-list"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                                <div class="card-body">
+                                                    <div>
+                                                        <div class="col-md-12">
+                                                            <div class="table-scrollable">
+                                                                <div class="table-responsive">
+                                                                    <table id="user-datatable" class="table table-striped table-bordered"></table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            $("#menu-3").addClass("side-menu--active");
+            $("#menu-3 + ul").addClass("side-menu__sub-open");
+
+            let userTable;
+            let sessionAgentId = `<%= session.auth.id %>`;
+            let sessionAgentCode = `<%= session.auth.agentCode %>`;
+
+            function drawTable() {
+                if (userTable) {
+                    userTable.ajax.reload();
+                } else {
+                    userTable = $("#user-datatable").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[8, "desc"]],
+                        columns: [
+                            { title: "<%= __('user.table.no') %>", data: "no", width: "60px", orderable: false },
+                            { title: "<%= __('user.table.agent_code') %>", data: "agentCode" },
+                            { title: "<%= __('user.table.user_code') %>", data: "userCode" },
+                            { title: "<%= __('user.table.balance') %>", data: "balance" },
+                            { title: "<%= __('user.table.targetRtp') %>", data: "targetRtp" },
+                            { title: "<%= __('user.table.totalDebit') %>", data: "totalDebit" },
+                            { title: "<%= __('user.table.totalCredit') %>", data: "totalCredit" },
+                            { title: "<%= __('user.table.status') %>", data: "status" },
+                            { title: "<%= __('user.table.createdAt') %>", data: "createdAt", width: "160px" },
+                        ],
+                        ajax: {
+                            url: `/api/user/all`,
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+
+                                data.agentCode = "all";
+                                let targetAgentCode = $("#agent-list").val();
+                                if (targetAgentCode) {
+                                    data.agentCode = targetAgentCode;
+                                }
+
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.data) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].agentCode = convertString(res.data[i].agentCode, 30);
+                                        res.data[i].userCode = convertString(res.data[i].userCode, 30);
+                                        res.data[i].balance = convertNumber(res.data[i].balance);
+                                        res.data[i].targetRtp = Number(res.data[i].targetRtp);
+                                        res.data[i].totalDebit = convertNumber(res.data[i].totalDebit);
+                                        res.data[i].totalCredit = convertNumber(res.data[i].totalCredit);
+                                        res.data[i].status =
+                                            Number(res.data[i].status) == 1
+                                                ? '<span class="text-600 text-theme-9 leading-none mt-3">OK</span>'
+                                                : '<span class="text-600 text-theme-6 leading-none mt-3">Deleted</span>';
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt);
+                                    }
+
+                                    $("#total-users-count").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function getChildAgents(id) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/agent/child/${id}`,
+                    success: function (res) {
+                        if (res.status == 1) {
+                            let data = res.child;
+                            let optionStr = `<option value="all"> <%= __('user.all_agent') %> </option>`;
+
+                            for (let i = 0; i < data.length; i++) {
+                                optionStr += `<option value = '${data[i].agentCode}'> ${data[i].agentCode} </option>`;
+                            }
+
+                            $("#agent-list").html(optionStr);
+                            $("#agent-list").val("all");
+                            tail.select("#agent-list", { search: true, width: 160, locale: "<%= session.locale %>" });
+                        }
+                    },
+                });
+            }
+
+            drawTable();
+            getChildAgents(sessionAgentId);
+        </script>
+    </body>
+</html>

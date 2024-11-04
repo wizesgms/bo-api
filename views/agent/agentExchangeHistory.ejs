@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('agent_exchange_history.page_title')}) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('agent_exchange_history.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div>
+                                    <div class="col-12">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <div class="card-header flex justify-between items-center">
+                                                    <div style="font-size: 14px">
+                                                        <span><%= __('agent_exchange_history.table_title') %></h2></span>
+                                                        <span id="exchange-history-count">(0)</span>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row items-center">
+                                                        <div class="mr-2">
+                                                            <select class="input min-width border" id="agent-list" onchange="drawTable()"></select>
+                                                        </div>
+                                                        <div class="mr-2">
+                                                            <select class="input min-width border" id="target-charge-type" onchange="drawTable()">
+                                                                <option value="0"><%= __('agent_exchange_history.all_exchange_history') %></option>
+                                                                <option value="1"><%= __('agent_exchange_history.deposit_in_history') %></option>
+                                                                <option value="2"><%= __('agent_exchange_history.deposit_out_history') %></option>
+                                                                <option value="3"><%= __('agent_exchange_history.withdraw_history') %></option>
+                                                            </select>
+                                                        </div>
+                                                        <input data-daterange="true" id="exchange-history-period" class="datepicker input w-56 border block mr-2" />
+                                                        <button onclick="drawTable()" class="button flex items-center justify-center text-gray-700 border border-theme-1 text-white">
+                                                            <i data-feather="search" class="w-4 h-4 mr-2"></i>
+                                                            <%= __('agent_exchange_history.search') %>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                                <div class="card-body">
+                                                    <div>
+                                                        <div class="col-sm-12">
+                                                            <div class="table-scrollable">
+                                                                <div class="table-responsive">
+                                                                    <table id="exchange-history-datatable" class="table table-striped table-bordered"></table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            $("#menu-2").addClass("side-menu--active");
+            $("#menu-2 + ul").addClass("side-menu__sub-open");
+
+            const chargeTypeHtml = {
+                0: `<span class="px-1 rounded inline-block border border-theme-6 text-theme-6 dark:border-theme-6"><%= __('agent_exchange_history.withdraw') %></span>`,
+                1: `<span class="px-1 rounded inline-block border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10"><%= __('agent_exchange_history.deposit') %></span>`,
+            };
+
+            let exchangeHistoryTable;
+            let sessionAgentId = `<%= session.auth.id %>`;
+            let sessionAgentCode = `<%= session.auth.agentCode %>`;
+
+            function drawTable() {
+                if (exchangeHistoryTable) {
+                    exchangeHistoryTable.ajax.reload();
+                } else {
+                    exchangeHistoryTable = $("#exchange-history-datatable").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[9, "desc"]],
+                        columns: [
+                            { title: "<%= __('agent_exchange_history.table.no') %>", data: "no", width: "60px", orderable: false },
+                            { title: "<%= __('agent_exchange_history.table.parent_code') %>", data: "parentCode" },
+                            { title: "<%= __('agent_exchange_history.table.agent_code') %>", data: "agentCode" },
+                            { title: "<%= __('agent_exchange_history.table.charge_type') %>", data: "chargeType" },
+                            { title: "<%= __('agent_exchange_history.table.charge_amount') %>", data: "chargeAmount" },
+                            { title: "<%= __('agent_exchange_history.table.parent_prev_balance') %>", data: "parentPrevBalance" },
+                            { title: "<%= __('agent_exchange_history.table.parent_after_balance') %>", data: "parentAfterBalance" },
+                            { title: "<%= __('agent_exchange_history.table.agent_prev_balance') %>", data: "agentPrevBalance" },
+                            { title: "<%= __('agent_exchange_history.table.agent_after_balance') %>", data: "agentAfterBalance" },
+                            { title: "<%= __('agent_exchange_history.table.created_at') %>", data: "createdAt", width: "160px" },
+                        ],
+                        ajax: {
+                            url: `/api/agent_transaction`,
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+
+                                let chargeType = $("#target-charge-type").val();
+                                if (chargeType) {
+                                    data.method = chargeType;
+                                } else {
+                                    data.method = 0;
+                                }
+
+                                data.agentCode = "all";
+                                let targetAgentCode = $("#agent-list").val();
+                                if (targetAgentCode) {
+                                    data.agentCode = targetAgentCode;
+                                }
+
+                                data.startDate = $("#exchange-history-period").val().split(" - ")[0];
+                                data.endDate = $("#exchange-history-period").val().split(" - ")[1];
+
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.data) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].parentCode = convertString(res.data[i].parentCode, 30);
+                                        res.data[i].agentCode = convertString(res.data[i].agentCode, 30);
+                                        res.data[i].chargeType = chargeTypeHtml[Number(res.data[i].chargeType)];
+                                        res.data[i].chargeAmount = convertNumber(res.data[i].chargeAmount);
+                                        res.data[i].parentPrevBalance = convertNumber(res.data[i].parentPrevBalance);
+                                        res.data[i].parentAfterBalance = convertNumber(res.data[i].parentAfterBalance);
+                                        res.data[i].agentPrevBalance = convertNumber(res.data[i].agentPrevBalance);
+                                        res.data[i].agentAfterBalance = convertNumber(res.data[i].agentAfterBalance);
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt);
+                                    }
+
+                                    $("#exchange-history-count").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function getChildAgents(id) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/agent/child/${id}`,
+                    success: function (res) {
+                        if (res.status == 1) {
+                            let data = res.child;
+                            let optionStr = `<option value="all"> <%= __('agent_exchange_history.all_agent') %> </option>`;
+
+                            for (let i = 0; i < data.length; i++) {
+                                optionStr += `<option value = '${data[i].agentCode}'> ${data[i].agentCode} </option>`;
+                            }
+
+                            $("#agent-list").html(optionStr);
+                            $("#agent-list").val("all");
+                            tail.select("#agent-list", { search: true, width: 160, locale: '<%= session.locale %>' });
+                            tail.select("#target-charge-type", { search: false, width: 160, locale: '<%= session.locale %>', locale: '<%= session.locale %>' });
+                        }
+                    },
+                });
+            }
+
+            drawTable();
+            getChildAgents(sessionAgentId);
+        </script>
+    </body>
+</html>

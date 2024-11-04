@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('profile.page_title') }) -%>
+
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('profile.title') %></h2>
+                            </div>
+                            <div class="grid grid-cols-12 gap-6">
+                                <div class="col-span-12 lg:col-span-6 xxl:col-span-4 flex lg:block flex-col-reverse">
+                                    <div class="intro-y box mt-2">
+                                        <div class="relative flex items-center gap-5 py-2">
+                                            <div class="h-10 image-fit"></div>
+                                            <div class="mr-auto gap-5">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="font-medium text-base items-center">
+                                                        <h3 class="mb-0" style="font-size: 18px" id="agent-nickname"></h3>
+                                                    </div>
+                                                    <h2 class="text-gray-600" style="font-size: 13px"><%= __('profile.detail.title') %></h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-5 border-t border-gray-200 dark:border-dark-5">
+                                            <div class="grid grid-cols-12 gap-3 my-4">
+                                                <div class="flex col-span-3">
+                                                    <i data-feather="box" class="w-4 h-4 mr-2"></i><%= __('profile.detail.balance') %> :
+                                                </div>
+                                                <div class="col-span-9">
+                                                    <span id="agent-balance"></span>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-3 my-4">
+                                                <div class="flex col-span-3">
+                                                    <i data-feather="box" class="w-4 h-4 mr-2"></i><%= __('profile.detail.agent_code') %> :
+                                                </div>
+                                                <div class="col-span-9">
+                                                    <span id="agent-code"></span>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-3 my-4 items-center">
+                                                <div class="flex col-span-3">
+                                                    <i data-feather="box" class="w-4 h-4 mr-2"></i><%= __('profile.detail.agent_token') %> :
+                                                </div>
+                                                <div class="col-span-9">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-1">
+                                                            <span id="agent-token"></span>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#agent-token"
+                                                            id="copy_btn"
+                                                            class="btn button button--sm flex flex-end bg-theme-1 text-right text-white p-0"
+                                                        >
+                                                            <%= __('profile.detail.copy') %>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-3 my-4">
+                                                <div class="flex col-span-3">
+                                                    <i data-feather="box" class="w-4 h-4 mr-2"></i><%= __('profile.detail.percent') %> :
+                                                </div>
+                                                <div class="col-span-9"><span id="agent-percent"></span> (%)</div>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-3 my-4">
+                                                <div class="flex col-span-3">
+                                                    <i data-feather="box" class="w-4 h-4 mr-2"></i><%= __('profile.detail.memo') %> :
+                                                </div>
+                                                <div class="col-span-9">
+                                                    <span id="agent-memo"></span>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-3 my-4">
+                                                <div class="flex col-span-3">
+                                                    <i data-feather="box" class="w-4 h-4 mr-2"></i><%= __('profile.detail.agent_type') %> :
+                                                </div>
+                                                <div class="col-span-9">
+                                                    <span id="agent-type"></span>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-3 my-4">
+                                                <div class="flex col-span-3">
+                                                    <i data-feather="box" class="w-4 h-4 mr-2"></i><%= __('profile.detail.api_type') %> :
+                                                </div>
+                                                <div class="col-span-9">
+                                                    <span id="api-type"></span>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-12 gap-3 my-4">
+                                                <div class="flex col-span-3">
+                                                    <i data-feather="box" class="w-4 h-4 mr-2"></i><%= __('profile.detail.status') %> :
+                                                </div>
+                                                <div class="col-span-9">
+                                                    <span id="agent-status"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-span-12 lg:col-span-6 xxl:col-span-8">
+                                    <div class="intro-y box lg:mt-2">
+                                        <div class="relative flex items-center gap-5 py-2">
+                                            <div class="h-10 image-fit"></div>
+                                            <div class="mr-auto">
+                                                <h2 class="font-medium text-base mr-auto" style="font-size: 18px"><%= __('profile.change.title') %></h2>
+                                            </div>
+                                        </div>
+                                        <div class="p-5 border-t border-gray-200 dark:border-dark-5">
+                                            <div class="grid grid-cols-12 gap-5">
+                                                <div class="col-span-12">
+                                                    <div class="mt-3">
+                                                        <label><%= __('profile.change.password') %></label>
+                                                        <input type="text" class="input w-full border mt-2" id="agent-new-password" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-span-12">
+                                                    <div class="mt-3">
+                                                        <label><%= __('profile.change.memo') %></label>
+                                                        <textarea id="agent-new-memo" placeholder="" class="input w-full border mt-2" rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-end mt-4">
+                                                <button type="button" id="action-btn" class="button w-20 bg-theme-1 text-white ml-auto">
+                                                    <%= __('profile.change.change') %>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- main content here -->
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            const sessionAgentId = `<%= session.auth.id %>`;
+
+            let agent_role = {
+                1: `<span class="text-theme-9 "><%= __('profile.change.distribution') %></span>`,
+                2: `<span class="text-theme-12 "><%= __('profile.change.run') %></span>`,
+                3: `<span class="text-theme-6 "><%= __('profile.change.parallel') %></span>`,
+            };
+
+            let agent_status = {
+                1: `<span class="text-theme-9 "><%= __('profile.alert.open') %></span>`,
+                0: `<span class="text-theme-6 "><%= __('profile.alert.close') %></span>`,
+            };
+
+            let api_method = {
+                1: `<div class="text-theme-9"><%= __('profile.alert.transfer') %></div>`,
+                0: `<div class="text-theme-6"><%= __('profile.alert.seamless') %></div>`,
+            };
+
+            const clipboard = new ClipboardJS("#copy_btn");
+
+            clipboard.on("success", function (e) {
+                showToast("success", e.text);
+                e.clearSelection();
+            });
+
+            clipboard.on("error", function (e) {
+                showToast("error", "<%= __('common.copy_error') %>");
+            });
+
+            function validateUpdate(data) {
+                if (data.password == "") {
+                    showToast("warning", "<%= __('profile.please_check_password') %>");
+                    $("#agent-new-password").focus();
+                    return false;
+                }
+
+                return true;
+            }
+
+            function getMyInfo() {
+                $.ajax({
+                    type: "get",
+                    url: "/api/agent/" + sessionAgentId,
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status) {
+                            const agentInfo = res.agent;
+
+                            if (agentInfo) {
+                                $("#agent-nickname").html(agentInfo.agentCode.toLocaleUpperCase());
+                                $("#agent-balance").html(agentInfo.balance.toLocaleString());
+                                $("#agent-code").html(agentInfo.agentCode);
+                                $("#agent-token").html(agentInfo.token);
+                                $("#agent-percent").html(agentInfo.percent);
+                                $("#agent-memo").html(agentInfo.memo);
+                                $("#agent-type").html(agent_role[agentInfo.agentType]);
+                                $("#agent-status").html(agent_status[agentInfo.status]);
+                                $("#api-type").html(api_method[agentInfo.apiType]);
+                                $("#agent-new-password").val(agentInfo.password);
+                                $("#agent-new-memo").html(agentInfo.memo);
+                            }
+                        }
+                    },
+                    error: function (data) {
+                        showToast("error", "<%= __('common.server_error') %>");
+                    },
+                });
+            }
+
+            $("#action-btn").click(function () {
+                const requestData = {
+                    id: $("#user_id").val(),
+                    password: $("#agent-new-password").val(),
+                    memo: $("#agent-new-memo").val(),
+                };
+
+                if (!validateUpdate(requestData)) {
+                    return;
+                }
+
+                let type, url;
+                type = "put";
+                url = "/api/agent/" + sessionAgentId;
+                handleUpdate(type, url, requestData);
+            });
+
+            function handleUpdate(type, url, data) {
+                showConfirmAlert("<%= __('profile.do_you_want_to_change') %>", function () {
+                    $.ajax({
+                        type: type,
+                        url: url,
+                        data: data,
+                        dataType: "json",
+                        success: function (data) {
+                            getMyInfo();
+                            showToast("success", "<%= __('common.operated_successfully') %>");
+                        },
+                        error: function (data) {
+                            getMyInfo();
+                            showToast("error", "<%= __('common.server_error') %>");
+                        },
+                    });
+                });
+            }
+
+            getMyInfo();
+        </script>
+    </body>
+</html>

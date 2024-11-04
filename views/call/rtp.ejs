@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('rtp.page_title')}) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('rtp.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div>
+                                    <div class="col-12">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <div class="card-header flex justify-between items-center">
+                                                    <div>
+                                                        <span style="font-size: 14px"><%= __('rtp.table_title') %></span>&nbsp;
+                                                        <span class="ml-3"><%= __('rtp.rtp_description') %></span>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row items-center">
+                                                        <button
+                                                            id="btn-apply-rtp"
+                                                            class="button flex items-center justify-center bg-theme-1 text-white"
+                                                            onclick="changeUserRtp('agent', `<%= session.auth.agentCode %>`)"
+                                                        >
+                                                            <%= __('rtp.update_all_rtp') %>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                                <div class="card-body">
+                                                    <div>
+                                                        <div class="col-md-12">
+                                                            <div class="table-scrollable">
+                                                                <div class="table-responsive">
+                                                                    <table id="main_table" class="table table-striped table-bordered"></table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- main content here -->
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            $("#menu-5").addClass("side-menu--active");
+            $("#menu-5 + ul").addClass("side-menu__sub-open");
+            let userTable;
+            const sessionAgentCode = `<%= session.auth.agentCode %>`;
+
+            function validateUpdate(data) {
+                if (data == "" || data > 100 || data < 0) {
+                    showToast("warning", "<%= __('rtp.message.please_input_exactly') %>");
+                    return false;
+                }
+
+                return true;
+            }
+
+            function drawTable() {
+                if (userTable) {
+                    userTable.ajax.reload();
+                } else {
+                    userTable = $("#main_table").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[4, "desc"]],
+                        columns: [
+                            { title: "<%= __('rtp.table.no') %>", data: "no", width: "60px", orderable: false },
+                            { title: "<%= __('rtp.table.agent_code') %>", data: "agentCode" },
+                            { title: "<%= __('rtp.table.user_code') %>", data: "userCode" },
+                            { title: "<%= __('rtp.table.balance') %>", data: "balance" },
+                            { title: "<%= __('rtp.table.total_debit') %>", data: "totalDebit" },
+                            { title: "<%= __('rtp.table.total_credit') %>", data: "totalCredit" },
+                            { title: "<%= __('rtp.table.target_rtp') %>", data: "targetRtp" },
+                            { title: "<%= __('rtp.table.control_rtp') %>", data: "controlRtp", orderable: false },
+                        ],
+                        ajax: {
+                            url: `/api/user/all`,
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+
+                                data.agentCode = sessionAgentCode;
+
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.status == 1) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].agentCode = convertString(res.data[i].agentCode, 30);
+                                        res.data[i].userCode = convertString(res.data[i].userCode, 30);
+                                        res.data[i].balance = convertNumber(res.data[i].balance);
+                                        res.data[i].targetRtp = Number(res.data[i].targetRtp);
+                                        res.data[i].totalDebit = Number(res.data[i].totalDebit);
+                                        res.data[i].totalCredit = Number(res.data[i].totalCredit);
+                                        res.data[
+                                            i
+                                        ].controlRtp = `<button class="button button--sm inline-block border border-theme-1 text-theme-1 outline-transparent dark:border-theme-2 dark:text-theme-2 mr-1" onclick="changeUserRtp('user', ${res.data[i].id})"><%= __('rtp.table.update') %></button>`;
+                                    }
+
+                                    $("#total-users-count").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function changeUserRtp(method, code) {
+                const targetRtp = prompt("<%= __('rtp.message.please_input_rtp_you_want_change') %>");
+
+                if (!validateUpdate(targetRtp)) {
+                    return;
+                }
+
+                if (targetRtp) {
+                    $("#btn-apply-rtp").attr("disabled", true);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/user/rtp",
+                        data: {
+                            method,
+                            code,
+                            rtp: Number(targetRtp),
+                        },
+                        success: function (res) {
+                            if (res.status) {
+                                showToast("success", "<%= __('common.operated_successfully') %>");
+                                drawTable();
+                            }
+                            $("#btn-apply-rtp").removeAttr("disabled");
+                        },
+                        error: function () {
+                            $("#btn-apply-rtp").removeAttr("disabled");
+                        },
+                    });
+                }
+            }
+
+            drawTable();
+        </script>
+    </body>
+</html>

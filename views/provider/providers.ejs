@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('provider.page_title') }) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('provider.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div>
+                                    <div class="col-12">
+                                        <div class="card border-primary">
+                                            <div class="card-body">
+                                                <div class="card-header flex justify-between items-center">
+                                                    <div style="font-size: 14px">
+                                                        <span><%= __('provider.table_title') %></span>
+                                                        <span id="provider-count">(0)</span>
+                                                    </div>
+                                                    <div class="flex flex-col sm:flex-row items-center">
+                                                        <button
+                                                            class="button inline-block border border-theme-1 text-theme-1 dark:border-theme-1 dark:text-theme-1 mr-2"
+                                                            onclick="handleCheckAllProvider()"
+                                                        >
+                                                            <%= __('provider.check_all_status') %>
+                                                        </button>
+                                                        <button
+                                                            id="provider-create-btn"
+                                                            onclick="handleCreateProviderModal()"
+                                                            class="button flex items-center justify-center bg-theme-1 text-white"
+                                                        >
+                                                            <i data-feather="plus-circle" class="w-4 h-4 mr-2"></i> <%= __('provider.create_provider') %>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+                                                <div class="card-body">
+                                                    <div>
+                                                        <div class="col-sm-12">
+                                                            <div class="table-scrollable">
+                                                                <div class="table-responsive">
+                                                                    <table id="provider-datatable" class="table table-striped table-bordered"></table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- create provider modal -->
+                                <div class="modal" id="create-provider-modal">
+                                    <div class="modal__content">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto" id="create-provider-action" hasanswer="false">
+                                                <%= __('provider.new_modal.title') %>
+                                            </h2>
+                                        </div>
+                                        <form id="create-provider-form">
+                                            <div class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('provider.new_modal.provider_code') %></label>
+                                                    <input id="create-provider-code" type="text" class="input w-full border mt-2 flex-1" />
+                                                </div>
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('provider.new_modal.provider_name') %></label>
+                                                    <input id="create-provider-name" type="text" class="input w-full border mt-2 flex-1" />
+                                                </div>
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('provider.new_modal.provider_endpoint') %></label>
+                                                    <input id="create-provider-endpoint" type="text" class="input w-full border mt-2 flex-1" />
+                                                </div>
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('provider.new_modal.provider_type') %></label>
+                                                    <select id="create-provider-type" class="input w-full border mt-1 flex-1">
+                                                        <option value="slot"><%= __('provider.new_modal.type.slot') %></option>
+                                                        <option value="live"><%= __('provider.new_modal.type.live') %></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button
+                                                type="button"
+                                                id="create-provider-confirm-btn"
+                                                onclick="handleCreateProvider()"
+                                                class="button w-20 bg-theme-1 text-white"
+                                            >
+                                                <%= __('provider.new_modal.create') %>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"
+                                                data-dismiss="modal"
+                                            >
+                                                <%= __('provider.new_modal.cancel') %>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- update provider modal -->
+                                <div class="modal" id="update-provider-modal">
+                                    <div class="modal__content">
+                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
+                                            <h2 class="font-medium text-base mr-auto" id="update-provider-action" hasanswer="false">
+                                                <%= __('provider.update_modal.title') %>
+                                            </h2>
+                                        </div>
+                                        <form id="update-provider-form">
+                                            <div class="p-5 grid grid-cols-12 gap-4 row-gap-3">
+                                                <input type="text" id="update-provider-id" style="display: none" />
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('provider.update_modal.provider_code') %></label>
+                                                    <input id="update-provider-code" type="text" class="input w-full border mt-2 flex-1" />
+                                                </div>
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('provider.update_modal.provider_name') %></label>
+                                                    <input id="update-provider-name" type="text" class="input w-full border mt-2 flex-1" />
+                                                </div>
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('provider.update_modal.provider_endpoint') %></label>
+                                                    <input id="update-provider-endpoint" type="text" class="input w-full border mt-2 flex-1" />
+                                                </div>
+                                                <div class="col-span-12 sm:col-span-12">
+                                                    <label><%= __('provider.update_modal.provider_type') %></label>
+                                                    <select id="update-provider-type" class="input w-full border mt-1 flex-1">
+                                                        <option value="slot"><%= __('provider.update_modal.type.slot') %></option>
+                                                        <option value="live"><%= __('provider.update_modal.type.live') %></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
+                                            <button
+                                                type="button"
+                                                id="update-provider-confirm-btn"
+                                                onclick="handleUpdateProvider()"
+                                                class="button w-20 bg-theme-1 text-white"
+                                            >
+                                                <%= __('provider.update_modal.confirm') %>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"
+                                                data-dismiss="modal"
+                                            >
+                                                <%= __('provider.update_modal.cancel') %>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            let providerTable;
+            let sessionAgentRole = `<%= session.auth.role %>`;
+            let allProviderInfoList = [];
+
+            function drawTable() {
+                if (providerTable) {
+                    providerTable.ajax.reload();
+                } else {
+                    providerTable = $("#provider-datatable").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[1, "asc"]],
+                        columns: [
+                            { title: `<%= __('provider.table.no') %>`, data: "no", width: "60px", orderable: false },
+                            { title: `<%= __('provider.table.provider_code') %>`, data: "code" },
+                            { title: `<%= __('provider.table.provider_name') %>`, data: "name" },
+                            { title: `<%= __('provider.table.provider_endpoint') %>`, data: "endpoint" },
+                            { title: `<%= __('provider.table.created_at') %>`, data: "createdAt" },
+                            { title: `<%= __('provider.table.response_time') %>`, data: "responseTime", orderable: false },
+                            { title: `<%= __('provider.table.total_game') %>`, data: "totalGames", orderable: false },
+                            { title: `<%= __('provider.table.running_game') %>`, data: "runningGames", orderable: false },
+                            { title: `<%= __('provider.table.checking_game') %>`, data: "checkingGames", orderable: false },
+                            { title: `<%= __('provider.table.provider_status') %>`, data: "status", width: "70px", orderable: false },
+                            { title: `<%= __('provider.table.action') %>`, data: "action", width: "120px", orderable: false },
+                        ],
+                        ajax: {
+                            url: "/api/provider",
+                            type: "GET",
+                            data: function (data) {
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.data) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        res.data[i].no = Number(i + 1) + Number(res.start);
+                                        res.data[i].code = res.data[i].code;
+                                        res.data[i].name = res.data[i].name;
+                                        res.data[i].endpoint = res.data[i].endpoint;
+
+                                        res.data[i].status = `<input type="checkbox" class="input input--sm input--switch border" ${
+                                            res.data[i].status == 1 ? `checked="checked"` : ``
+                                        } onclick="handleChangeStatus(${res.data[i].id}, ${res.data[i].status})">`;
+                                        res.data[i].totalGames = `<span id="total-game-${res.data[i].code}">-</span>`;
+                                        res.data[i].runningGames = `<span id="running-game-${res.data[i].code}">-</span>`;
+                                        res.data[i].checkingGames = `<span id="checking-game-${res.data[i].code}">-</span>`;
+
+                                        let actionHtml = "";
+
+                                        actionHtml += `<button class="button button--sm inline-block  border border-theme-1 text-theme-1 dark:border-theme-1 dark:text-theme-1 mr-1" onclick="handleCheckProvider('${res.data[i].code}')"><%= __('provider.table.check_status_provider') %></button>`;
+                                        actionHtml += `<button class="button button--sm inline-block  border border-theme-9 text-theme-9 dark:border-theme-9 dark:text-theme-9 mr-1" onclick="handleUpdateProviderModal(${res.data[i].id})"><%= __('provider.table.update_provider') %></button>`;
+                                        actionHtml += `<button id="btn-delete-provider" class="button button--sm inline-block  border border-theme-6 text-theme-6 dark:border-theme-6 dark:text-theme-6" onclick="handleDeleteProvider(${res.data[i].id})"><%= __('provider.table.destroy_provider') %></button>`;
+
+                                        res.data[i].action = actionHtml;
+                                        res.data[i].responseTime = `<span id="response-time-${res.data[i].code}">-</span>`;
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt);
+
+                                        allProviderInfoList.push({
+                                            endpoint: res.data[i].endpoint,
+                                            code: res.data[i].code,
+                                        });
+                                    }
+
+                                    $("#provider-count").html(`(${res.recordsTotal})`);
+                                }
+
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            function validateCreate(data) {
+                if (data.providerCode == "") {
+                    $("#create-provider-code").focus();
+                    showToast("warning", "<%= __('provider.please_check_provider_code') %>");
+                    return false;
+                }
+
+                if (data.providerName == "") {
+                    $("#create-provider-name").focus();
+                    showToast("warning", "<%= __('provider.please_check_provider_name') %>");
+                    return false;
+                }
+
+                if (data.providerEndpoint == "") {
+                    $("#create-provider-endpoint").focus();
+                    showToast("warning", "<%= __('provider.please_check_provider_endpoint') %>");
+                    return false;
+                }
+                return true;
+            }
+
+            function validateUpdate(data) {
+                if (data.providerCode == "") {
+                    $("#update-provider-code").focus();
+                    showToast("warning", "<%= __('provider.please_check_provider_code') %>");
+                    return false;
+                }
+
+                if (data.providerName == "") {
+                    $("#update-provider-name").focus();
+                    showToast("warning", "<%= __('provider.please_check_provider_name') %>");
+                    return false;
+                }
+
+                if (data.providerEndpoint == "") {
+                    $("#update-provider-endpoint").focus();
+                    showToast("warning", "<%= __('provider.please_check_provider_endpoint') %>");
+                    return false;
+                }
+                return true;
+            }
+
+            function handleCreateProviderModal() {
+                resetForm("create-provider-form");
+                cash("#create-provider-modal").modal("show");
+            }
+
+            function handleUpdateProviderModal(id) {
+                resetForm("update-provider-form");
+
+                $.ajax({
+                    type: "GET",
+                    url: `/api/provider/${id}`,
+                    success: function (res) {
+                        if (res.status) {
+                            $("#update-provider-id").val(res.data.id);
+                            $("#update-provider-code").val(res.data.code);
+                            $("#update-provider-name").val(res.data.name);
+                            $("#update-provider-endpoint").val(res.data.endpoint);
+
+                            cash("#update-provider-modal").modal("show");
+                        }
+                    },
+                });
+            }
+
+            function handleChangeStatus(id, status) {
+                const requestData = {
+                    status: status == 0 ? 1 : 0,
+                };
+
+                $.ajax({
+                    type: "PUT",
+                    url: `/api/provider/status/${id}`,
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('message.success') %>");
+                            drawTable();
+                        }
+                    },
+                });
+            }
+
+            function handleCheckProvider(code) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/provider/check?providerCode=${code}`,
+                    success: function (res) {
+                        if (res.status) {
+                            const result = res.result;
+
+                            if (result.status == 1) {
+                                $(`#response-time-${code}`).html(`${result.time}ms`);
+
+                                showToast("success", "<%= __('provider.check_status_success') %>");
+                            } else {
+                                $(`#response-time-${code}`).html(`-`);
+
+                                showToast("error", "<%= __('provider.check_status_failed') %>");
+                            }
+
+                            $(`#total-game-${code}`).html(result.total);
+                            $(`#running-game-${code}`).html(result.running);
+                            $(`#checking-game-${code}`).html(result.checking);
+                        }
+                    },
+                });
+            }
+
+            function handleCheckAllProvider() {
+                swal.queue([
+                    {
+                        text: "<%= __('provider.checking_providers') %>",
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        willOpen: function () {
+                            Swal.showLoading();
+                            $.ajax({
+                                type: "GET",
+                                url: `/api/provider/check?providerCode=all`,
+                                success: function (res) {
+                                    if (res.status) {
+                                        const result = res.result;
+
+                                        for (let i = 0; i < result.length; i++) {
+                                            if (result[i].status == 1) {
+                                                $(`#response-time-${result[i].code}`).html(`${result[i].time}ms`);
+                                            } else {
+                                                $(`#response-time-${result[i].code}`).html(`-`);
+                                            }
+
+                                            $(`#total-game-${result[i].code}`).html(result[i].total);
+                                            $(`#running-game-${result[i].code}`).html(result[i].running);
+                                            $(`#checking-game-${result[i].code}`).html(result[i].checking);
+                                        }
+                                    }
+
+                                    swal.closeModal();
+                                },
+                                error: function () {
+                                    swal.closeModal();
+                                },
+                            });
+                        },
+                    },
+                ]).catch(swal.noop);
+            }
+
+            function handleCreateProvider() {
+                let requestData = {
+                    providerCode: $("#create-provider-code").val(),
+                    providerName: $("#create-provider-name").val(),
+                    providerEndpoint: $("#create-provider-endpoint").val(),
+                    providerType: $("#provider-type").val(),
+                };
+
+                if (!validateCreate(requestData)) {
+                    return;
+                }
+
+                $("#create-provider-confirm-btn").attr("disabled", true);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/provider",
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('message.success') %>");
+                            cash("#create-provider-modal").modal("hide");
+                            drawTable();
+                        }
+                        $("#create-provider-confirm-btn").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#create-provider-confirm-btn").removeAttr("disabled");
+                    },
+                });
+            }
+
+            function handleUpdateProvider() {
+                let requestData = {};
+
+                requestData.providerCode = $("#update-provider-code").val();
+                requestData.providerName = $("#update-provider-name").val();
+                requestData.providerEndpoint = $("#update-provider-endpoint").val();
+                requestData.providerType = $("#update-provider-type").val();
+
+                if (!validateUpdate(requestData)) {
+                    return;
+                }
+
+                let updateProviderId = $("#update-provider-id").val();
+
+                $("#update-provider-confirm-btn").attr("disabled", true);
+
+                $.ajax({
+                    type: "PUT",
+                    url: `/api/provider/${updateProviderId}`,
+                    data: requestData,
+                    success: function (res) {
+                        if (res.status) {
+                            showToast("success", "<%= __('message.success') %>");
+                            cash("#update-provider-modal").modal("hide");
+                            drawTable();
+                        }
+                        $("#update-provider-confirm-btn").removeAttr("disabled");
+                    },
+                    error: function () {
+                        $("#update-provider-confirm-btn").removeAttr("disabled");
+                    },
+                });
+            }
+
+            function handleDeleteProvider(id) {
+                showConfirmAlert("<%= __('provider.do_you_really_delete_provider') %>", function () {
+                    $("#btn-delete-provider").attr("disabled", true);
+
+                    $.ajax({
+                        type: "DELETE",
+                        url: `/api/provider/${id}`,
+                        success: function (res) {
+                            if (res.status) {
+                                showToast("success", "<%= __('common.operated_successfully') %>");
+                                drawTable();
+                            }
+                            $("#btn-delete-provider").removeAttr("disabled");
+                        },
+                        error: function () {
+                            $("#btn-delete-provider").removeAttr("disabled");
+                        },
+                    });
+                });
+            }
+
+            drawTable();
+            handleCheckAllProvider();
+        </script>
+    </body>
+</html>

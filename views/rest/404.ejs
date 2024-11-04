@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/png" href="/assets/logo.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Management system." />
+        <meta name="keywords" content="Management system" />
+        <meta name="author" content="tonydev" />
+        <title>404</title>
+
+        <link rel="stylesheet" href="/assets/css/app.css" />
+    </head>
+
+    <body class="app">
+        <div class="container">
+            <div class="error-page flex flex-col lg:flex-row items-center justify-center h-screen text-center lg:text-left">
+                <div class="-intro-x lg:mr-20">
+                    <img alt="" class="h-48 lg:h-auto" src="/assets/images/error-illustration.svg" draggable="false" />
+                </div>
+                <div class="text-white mt-10 lg:mt-0">
+                    <div class="intro-x text-6xl font-medium">404</div>
+                    <div class="intro-x text-xl mt-3 mb-10"><%= __('404.not_found_page') %></div>
+                    <a href="/app/dashboard" class="intro-x button border border-white dark:border-dark-5 dark:text-gray-300 mt-10"> <%= __('404.go_dashboard') %> </a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

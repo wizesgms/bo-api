@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko" id="themeMode" class="light">
+    <!-- header -->
+    <%- include('../shared/header.ejs', {title: __('call_history.page_title')}) -%>
+    <body class="app">
+        <!-- preloader -->
+        <%- include('../shared/preloader.ejs') -%>
+
+        <!-- mobile menu -->
+        <%- include('../shared/mobile.ejs') -%>
+
+        <div class="flex">
+            <!-- sidebar -->
+            <%- include('../shared/sidebar.ejs') -%>
+
+            <div class="content">
+                <!-- topbar -->
+                <%- include('../shared/topbar.ejs') -%>
+
+                <!-- main content here -->
+
+                <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-12 xxl:col-span-12 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 mt-2">
+                            <div class="intro-y flex items-center h-10">
+                                <h2 class="text-lg font-medium truncate mr-5"><%= __('call_history.title') %></h2>
+                                <a href="" class="ml-auto flex text-theme-1 dark:text-theme-10">
+                                    <i data-feather="refresh-ccw" class="w-4 h-4 mr-3"></i> <%= __('common.reload') %>
+                                </a>
+                            </div>
+
+                            <div class="col-span-12 intro-y box mt-2 p-5">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <div class="card-header flex justify-between items-center">
+                                            <div style="font-size: 14px">
+                                                <span><%= __('call_history.table_title') %></span>
+                                                <span id="user-call-history-count">(0)</span>
+                                            </div>
+                                            <div class="flex flex-col sm:flex-row items-center">
+                                                <div class="mr-2">
+                                                    <select onchange="getUserList()" class="min-width border" id="call-history-agent-select"></select>
+                                                </div>
+                                                <div class="mr-2">
+                                                    <select onchange="drawTable()" class="min-width border" id="call-history-user-select"></select>
+                                                </div>
+                                                <input data-daterange="true" id="user-call-history-period" class="datepicker input w-56 border block mr-2" />
+                                                <button
+                                                    onclick="drawTable()"
+                                                    class="button flex items-center justify-center border border-theme-1 text-theme-1 dark:border-theme-10 dark:text-theme-10"
+                                                >
+                                                    <i data-feather="search" class="w-4 h-4 mr-2"></i>
+                                                    <%= __('call_history.search') %>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
+
+                                        <div class="card-body">
+                                            <div class="col-sm-12">
+                                                <div class="table-scrollable">
+                                                    <div class="table-responsive">
+                                                        <table id="user-call-history-datatable" class="table table-striped table-bordered"></table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer -->
+        <%- include('../shared/footer.ejs') -%>
+
+        <!-- global -->
+        <%- include('../shared/global.ejs') -%>
+
+        <script>
+            $("#menu-5").addClass("side-menu--active");
+            $("#menu-5 + ul").addClass("side-menu__sub-open");
+
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+
+            const startDate = moment(new Date(year, month, 1)).format("YYYY/MM/DD");
+            const endDate = moment(new Date(year, month + 1, 0)).format("YYYY/MM/DD");
+            const initialDate = `${startDate} - ${endDate}`;
+
+            $("#user-call-history-period").val(initialDate);
+
+            let sessionAuthId = `<%= session.auth.id %>`;
+            let userCallHistoryTable;
+
+            function getAgentsFunc() {
+                $.ajax({
+                    type: "get",
+                    url: `/api/agent/child/${sessionAuthId}`,
+                    data: {},
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status == 1) {
+                            let optionStr = "";
+                            const data = res.child;
+
+                            optionStr += "<option value='all'><%= __('call_history.all_agent') %></option>";
+
+                            for (let i = 0; i < data.length; i++) {
+                                optionStr += `<option value='${data[i].agentCode}'>${data[i].agentCode}</option>`;
+                            }
+
+                            $("#call-history-agent-select").html(optionStr);
+                            tail.select("#call-history-agent-select", { search: true, width: 160, locale: "<%= session.locale %>" });
+
+                            getUserList();
+                        }
+                    },
+                });
+            }
+
+            function getUserList() {
+                let ajaxURL = "";
+                if ($("#call-history-agent-select").val() == "all") {
+                    ajaxURL = `/api/user/all/list`;
+                } else {
+                    ajaxURL = `/api/user/agent/${$("#call-history-agent-select").val()}`;
+                }
+                $.ajax({
+                    type: "get",
+                    url: ajaxURL,
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status == 1) {
+                            tail.select("#call-history-user-select").remove();
+                            let optionStr = "<option value='all'><%= __('call_history.all_user') %></option>";
+                            let data = res.data;
+                            for (let i = 0; i < data.length; i++) {
+                                optionStr += `<option value='${data[i].userCode}'>${data[i].userCode}</option>`;
+                            }
+                            $("#call-history-user-select").html(optionStr);
+                            tail.select("#call-history-user-select", { search: true, width: 160, locale: "<%= session.locale %>" });
+
+                            drawTable();
+                        }
+                    },
+                });
+            }
+
+            function drawTable() {
+                if (userCallHistoryTable) {
+                    userCallHistoryTable.ajax.reload();
+                } else {
+                    userCallHistoryTable = $("#user-call-history-datatable").DataTable({
+                        ...dataTableGlobalConfig,
+                        order: [[0, "desc"]],
+                        columns: [
+                            { title: "<%= __('call_history.table.created_at') %>", data: "createdAt", width: "160px" },
+                            { title: "<%= __('call_history.table.agent_code') %>", data: "agentCode" },
+                            { title: "<%= __('call_history.table.user_code') %>", data: "userCode" },
+                            { title: "<%= __('call_history.table.provider') %>", data: "providerCode" },
+                            { title: "<%= __('call_history.table.game_code') %>", data: "gameCode" },
+                            { title: "<%= __('call_history.table.bet') %>", data: "bet" },
+                            { title: "<%= __('call_history.table.call_money') %>", data: "callMoney" },
+                            { title: "<%= __('call_history.table.status') %>", data: "status" },
+                        ],
+                        ajax: {
+                            url: "/api/call/history",
+                            type: "GET",
+                            data: function (data) {
+                                data.agentCode = $("#call-history-agent-select").val();
+                                data.userCode = $("#call-history-user-select").val();
+                                data.startDate = $("#user-call-history-period").val().split(" - ")[0];
+                                data.endDate = $("#user-call-history-period").val().split(" - ")[1];
+
+                                data.search = data.search.value;
+                                data.dir = data.order[0].dir;
+                                data.order = data.columns[data.order[0].column].data;
+                                delete data.columns;
+                            },
+                            dataSrc: function (res) {
+                                if (res.status == 1) {
+                                    for (let i = 0; i < res.data.length; i++) {
+                                        const callMoney = (Number(res.data[i].bet) * Number(res.data[i].rtp)) / 100;
+
+                                        res.data[i].createdAt = convertDate(res.data[i].createdAt);
+                                        res.data[i].agentCode = convertString(res.data[i].agentCode, 30);
+                                        res.data[i].userCode = convertString(res.data[i].userCode, 30);
+                                        res.data[i].providerCode = convertString(res.data[i].providerCode, 30);
+                                        res.data[i].gameCode = convertString(res.data[i].gameCode, 30);
+                                        res.data[i].bet = convertNumber(res.data[i].bet);
+                                        res.data[i].callMoney = convertNumber(callMoney);
+                                        let status = ``;
+
+                                        if (res.data[i].status == 0) {
+                                            status = `<span class="text-theme-12"><%= __('call_history.table.call_pending') %></span>`;
+                                        } else if (res.data[i].status == 1) {
+                                            status = `<span class="text-theme-1"><%= __('call_history.table.call_processing') %></span>`;
+                                        } else if (res.data[i].status == 2) {
+                                            status = `<span class="text-theme-9"><%= __('call_history.table.call_finished') %></span>`;
+                                        } else if (res.data[i].status == 3) {
+                                            status = `<span class="text-theme-11"><%= __('call_history.table.call_rejected') %></span>`;
+                                        } else if (res.data[i].status == 4) {
+                                            status = `<span class="text-theme-6"><%= __('call_history.table.call_canceled') %></span>`;
+                                        }
+
+                                        res.data[i].status = status;
+                                    }
+
+                                    $("#user-call-history-count").html(`(${res.recordsTotal})`);
+                                }
+                                return res.data;
+                            },
+                        },
+                    });
+                }
+            }
+
+            getAgentsFunc();
+        </script>
+    </body>
+</html>
