@@ -43,7 +43,7 @@
 	"global.player_bet_changed": "Cannot apply call because player bet amount changed",
 	"global.cannot_change_agent_api": "Cannot change agent api type because the agent have users.",
 	"global.unknown_error": "Unknown Error",
-	"sidebar.title": "FiversCan",
+	"sidebar.title": "IsomatSlot",
 	"sidebar.dashboard": "Dashboard",
 	"sidebar.agent": "Agents",
 	"sidebar.agent_manage": "Agent Manage",
