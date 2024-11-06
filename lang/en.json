@@ -685,9 +685,10 @@
 	"provider.check_all_status": "Check All",
 	"provider.check_status": "Check",
 	"provider.checking_providers": "Checking providers ...",
-	"process.env.AAS_ENDPOINT": "process.env.AAS_ENDPOINT",
-	"": "",
 	"profile.change.currentPassword": "Current Password",
 	"profile.change.confirmPassword": "Confirm Password",
-	"profile.change.newPassword": "New Password"
+	"profile.change.newPassword": "New Password",
+	"topbar.agent_sum_balance": "Sub Agent Sum",
+	"topbar.sub_user_sum": "Sub User Sum",
+	"topbar.agent_percent": "GGR Share"
 }
