@@ -900,7 +900,7 @@
             {
                 "code": "PRAGMATIC",
                 "name": "Pragmatic Play",
-                "status": 1 // 1: open, 0: maintenancing
+                "game_type": 1
             },
             ...
         ]
@@ -957,23 +957,32 @@
 <code>
     - <%= __('docs.list_label.success') %>:
     {
-        "status": 1,
-        "msg": "SUCCESS",
-        "games": [
-            {
-                "game_code": "vs243mwarrior",
-                "game_name": "Monkey Warrior",
-                "banner": "https://.../vs243mwarrior.png",
-                "status": 1
-            },
-            ...
-        ]
+        "ProviderGames": [
+        {
+            "GameCode": "2",
+            "GameName": "GodOfChess",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http://localhost:1002/Image/CQ9/en/2.png",
+            "ProviderGameType": null
+          },
+          {
+            "GameCode": "10",
+            "GameName": "LuckyBats",
+            "GameType": 1,
+            "Category": "Games",
+            "ImageUrl": "http://localhost:1002/Image/CQ9/en/10.png",
+            "ProviderGameType": null
+          },
+        ],
+        "ErrorCode": 0,
+        "ErrorMessage": null
     }
 
     - <%= __('docs.list_label.failure') %>:
     {
-        "status": 0,
-        "msg": "INTERNAL_ERROR"
+        "ErrorCode": 1,
+        "ErrorMessage": "INTERNAL_ERROR"
     }
 
 </code>
