@@ -729,6 +729,404 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="mt-3 mb-2 agent-level-2">Seamless API ( Gold API )</div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 seamless_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">1. <%= __('docs.list_label.run_game') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#slot-game-launch-seamless"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="slot-game-launch-seamless">
+    {
+        "method": "game_launch",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test",
+        "provider_code": "PRAGMATIC",
+        "game_code": "vs20doghouse",
+        "lang": "en"
+    }
+
+</code>
+<code id="live-game-launch-seamless">
+    {
+        "method": "game_launch",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test",
+        "provider_code": "EVOLUTION",
+        "game_code": "nxpkul2hgclallno", // Optional - When it is empty, lobby url is returned.
+        "lang": "en"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "launch_url": "http://kgame-tw1.pplaygame.net/..."
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INVALID_PROVIDER"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 seamless_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">
+                                                2. <%= __('docs.list_label.info_balance_agent') %>
+                                            </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#agent-info"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="agent-info">
+    {
+        "method": "money_info",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+    }
+
+</code>
+
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1000000,
+        }
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INVALID_PARAMETER"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 seamless_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">3. <%= __('docs.list_label.provider') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#slot-provider-list-seamless"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="slot-provider-list-seamless">
+    {
+        "method": "provider_list",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>"
+    }
+
+</code>
+
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "providers": [
+            {
+                "code": "PRAGMATIC",
+                "name": "Pragmatic Play",
+                "status": 1 // 1: open, 0: maintenancing
+            },
+            ...
+        ]
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INTERNAL_ERROR"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 seamless_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">
+                                                4. <%= __('docs.list_label.game_list') %>
+                                            </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>: 
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#slot-game-list-seamless"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="slot-game-list-seamless">
+    {
+        "method": "game_list",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "provider_code": "PRAGMATIC"
+    }
+
+</code>
+<code id="slot-provider-list">
+    "PRAGMATIC","REELKINGDOM","HABANERO",
+    "BOOONGO","PLAYSON","CQ9","DREAMTECH","EVOPLAY",
+    "TOPTREND","PGSOFT", "GENESIS", "EVOLUTION", "EZUGI"
+    
+</code>
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "games": [
+            {
+                "game_code": "vs243mwarrior",
+                "game_name": "Monkey Warrior",
+                "banner": "https://.../vs243mwarrior.png",
+                "status": 1
+            },
+            ...
+        ]
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INTERNAL_ERROR"
+    }
+
+</code>
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 mb-2 agent-level-2">Seamless API ( Site API )</div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 seamless_api site_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">
+                                                5. <%= __('docs.list_label.site_endpoint') %> 
+                                                <span style='color: red'> ( <%= __('docs.list_label.site_endpoint_description') %> )</span>
+                                            </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="site_endpoint">https://goldtest-site.com/gold_api</a>
+
+                                                        <pre>
+<code id="balance">
+    {
+        "method": "user_balance",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_secret": "<%= session.auth.secretKey %>",
+        "user_code": "test"
+    }
+
+</code>
+
+
+                                                        </pre>
+                                                        <%= __('docs.list_label.request_example') %>:
+
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="site_endpoint">https://goldtest-site.com/gold_api</a>
+                                                        <pre>
+<code id="transaction">
+    {
+        "method": "transaction",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_secret": "<%= session.auth.secretKey %>",
+        "agent_balance": 10000000,
+        "user_code": "test",
+        "user_balance": 99200,
+        "game_type": "slot",
+        "slot": {
+            "provider_code": "BOOONGO",
+            "game_code": "sun_of_egypt",
+            "type": "BASE",
+            "bet_money": 1000,
+            "win_money": 200,
+            "txn_id": "MVGKE8FJE3838EFN378DF",
+            "txn_type": "debit_credit" // or "debit" or "credit"
+        }
+    }
+
+</code>
+<code id="transaction">
+    {
+        "method": "transaction",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_secret": "<%= session.auth.secretKey %>",
+        "agent_balance": 10000000,
+        "user_code": "test",
+        "user_balance": 102000,
+        "game_type": "live",
+        "live": {
+            "provider_code": "EVOLUTION",
+            "game_code": "100",
+            "type": "lucky7",
+            "bet_money": 2000,
+            "win_money": 4000,
+            "txn_id": "MVGKE8FJE3838EFN378DF",
+            "txn_type": "debit_credit" // or "debit" or "credit"
+        }
+    }
+
+</code>
+<code>
+    <%= __('docs.ref_panel.1') %>
+
+    - "debit" // <%= __('docs.ref_panel.2') %>
+        "txn_type": "debit"
+        "bet": 2000   // <%= __('docs.ref_panel.5') %>
+        "win": 0      // <%= __('docs.ref_panel.4') %>
+        "txn_id": "64a83..."
+
+    - "credit" // <%= __('docs.ref_panel.3') %>
+        "txn_type": "credit"
+        "bet": 0     // <%= __('docs.ref_panel.4') %>
+        "win": 1500  // <%= __('docs.ref_panel.5') %>
+        "txn_id": "64a83..."
+
+    - "debit_credit"// <%= __('docs.ref_panel.6') %>
+        "txn_type": "debit_credit"
+        "bet": 2000  // <%= __('docs.ref_panel.5') %>
+        "win": 1500  // <%= __('docs.ref_panel.5') %>
+
+</code>
+                                                        </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "user_balance": 1000
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "user_balance": 0,
+        "msg": "INSUFFICIENT_USER_FUNDS"
+    }
+    
+</code>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "user_balance": 1000
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INSUFFICIENT_USER_FUNDS"
+    }
+    
+</code>
+<!-- end response -->
+                                                    </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <% if(process.env.CALL_API == "true") { %>
                                         <%- include('./docs_call.ejs') -%>
