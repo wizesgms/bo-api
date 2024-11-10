@@ -1,0 +1,6 @@
+2024-11-10 18:44:08 info: [ Database ]: Database (fiverscan) creating...
+2024-11-10 18:44:08 warn: [ Database ]: Database already exists. (fiverscan)
+2024-11-10 18:44:08 info: [ Database ]: Updating database...
+2024-11-10 18:44:08 info: [ Loaded ]: Database config
+2024-11-10 18:44:09 info: [ Loaded ]: Express config
+2024-11-10 18:44:09 info: [ Server ]: Server is started on 5006 port
