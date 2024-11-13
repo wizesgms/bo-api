@@ -30,18 +30,6 @@ module.exports = (sequelize, Sequelize) => {
             config: {
                 type: Sequelize.TEXT,
             },
-            totalGames: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            runningGames: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
-            checkingGames: {
-                type: Sequelize.STRING,
-                allowNull: true,
-            },
         },
         {
             tableName: "providers",
