@@ -32,15 +32,15 @@ module.exports = (sequelize, Sequelize) => {
             },
             totalGames: {
                 type: Sequelize.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             runningGames: {
                 type: Sequelize.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             checkingGames: {
                 type: Sequelize.STRING,
-                allowNull: false,
+                allowNull: true,
             },
         },
         {
