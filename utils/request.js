@@ -60,7 +60,7 @@ exports.requestForCheck = async (providerCode, providerEndpoint) => {
 
         const response = await axios.get(url);
 
-        if (response.ErrorCode == 1) {
+        if (response.ErrorCode == 0) {
             const games = response.ProviderGames;
 
             for (const game of games) {
