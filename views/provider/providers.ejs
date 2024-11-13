@@ -40,12 +40,6 @@
                                                     </div>
                                                     <div class="flex flex-col sm:flex-row items-center">
                                                         <button
-                                                            class="button inline-block border border-theme-1 text-theme-1 dark:border-theme-1 dark:text-theme-1 mr-2"
-                                                            onclick="handleCheckAllProvider()"
-                                                        >
-                                                            <%= __('provider.check_all_status') %>
-                                                        </button>
-                                                        <button
                                                             id="provider-create-btn"
                                                             onclick="handleCreateProviderModal()"
                                                             class="button flex items-center justify-center bg-theme-1 text-white"
@@ -370,45 +364,6 @@
                         }
                     },
                 });
-            }
-
-            function handleCheckAllProvider() {
-                swal.queue([
-                    {
-                        text: "<%= __('provider.checking_providers') %>",
-                        showConfirmButton: false,
-                        allowOutsideClick: false,
-                        willOpen: function () {
-                            Swal.showLoading();
-                            $.ajax({
-                                type: "GET",
-                                url: `/api/provider/check?providerCode=all`,
-                                success: function (res) {
-                                    if (res.status) {
-                                        const result = res.result;
-
-                                        for (let i = 0; i < result.length; i++) {
-                                            if (result[i].status == 1) {
-                                                $(`#response-time-${result[i].code}`).html(`${result[i].time}ms`);
-                                            } else {
-                                                $(`#response-time-${result[i].code}`).html(`-`);
-                                            }
-
-                                            $(`#total-game-${result[i].code}`).html(result[i].total);
-                                            $(`#running-game-${result[i].code}`).html(result[i].running);
-                                            $(`#checking-game-${result[i].code}`).html(result[i].checking);
-                                        }
-                                    }
-
-                                    swal.closeModal();
-                                },
-                                error: function () {
-                                    swal.closeModal();
-                                },
-                            });
-                        },
-                    },
-                ]).catch(swal.noop);
             }
 
             function handleCreateProvider() {
