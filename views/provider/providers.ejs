@@ -230,9 +230,6 @@
                                         res.data[i].status = `<input type="checkbox" class="input input--sm input--switch border" ${
                                             res.data[i].status == 1 ? `checked="checked"` : ``
                                         } onclick="handleChangeStatus(${res.data[i].id}, ${res.data[i].status})">`;
-                                        res.data[i].totalGames = `<span id="total-game-${res.data[i].code}">-</span>`;
-                                        res.data[i].runningGames = `<span id="running-game-${res.data[i].code}">-</span>`;
-                                        res.data[i].checkingGames = `<span id="checking-game-${res.data[i].code}">-</span>`;
 
                                         let actionHtml = "";
 
