@@ -52,7 +52,7 @@ exports.requestForCheck = async (providerCode, providerEndpoint) => {
     }
 
     try {
-        let url = `${providerEndpoint}/api/gamelist?isTest=false`;
+        let url = `https://1api.isomatslot.com/?provider=${providerCode}`;
 
         if (providerCode == "REELKINGDOM") {
             url += `&pinfo=REELKINGDOM`;
