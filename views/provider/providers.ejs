@@ -38,15 +38,6 @@
                                                         <span><%= __('provider.table_title') %></span>
                                                         <span id="provider-count">(0)</span>
                                                     </div>
-                                                    <div class="flex flex-col sm:flex-row items-center">
-                                                        <button
-                                                            id="provider-create-btn"
-                                                            onclick="handleCreateProviderModal()"
-                                                            class="button flex items-center justify-center bg-theme-1 text-white"
-                                                        >
-                                                            <i data-feather="plus-circle" class="w-4 h-4 mr-2"></i> <%= __('provider.create_provider') %>
-                                                        </button>
-                                                    </div>
                                                 </div>
                                                 <div class="w-full border-t border-gray-200 dark:border-dark-5 mt-2"></div>
                                                 <div class="card-body">
@@ -61,109 +52,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- create provider modal -->
-                                <div class="modal" id="create-provider-modal">
-                                    <div class="modal__content">
-                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
-                                            <h2 class="font-medium text-base mr-auto" id="create-provider-action" hasanswer="false">
-                                                <%= __('provider.new_modal.title') %>
-                                            </h2>
-                                        </div>
-                                        <form id="create-provider-form">
-                                            <div class="p-5 grid grid-cols-12 gap-4 row-gap-3">
-                                                <div class="col-span-12 sm:col-span-12">
-                                                    <label><%= __('provider.new_modal.provider_code') %></label>
-                                                    <input id="create-provider-code" type="text" class="input w-full border mt-2 flex-1" />
-                                                </div>
-                                                <div class="col-span-12 sm:col-span-12">
-                                                    <label><%= __('provider.new_modal.provider_name') %></label>
-                                                    <input id="create-provider-name" type="text" class="input w-full border mt-2 flex-1" />
-                                                </div>
-                                                <div class="col-span-12 sm:col-span-12">
-                                                    <label><%= __('provider.new_modal.provider_endpoint') %></label>
-                                                    <input id="create-provider-endpoint" type="text" class="input w-full border mt-2 flex-1" />
-                                                </div>
-                                                <div class="col-span-12 sm:col-span-12">
-                                                    <label><%= __('provider.new_modal.provider_type') %></label>
-                                                    <select id="create-provider-type" class="input w-full border mt-1 flex-1">
-                                                        <option value="slot"><%= __('provider.new_modal.type.slot') %></option>
-                                                        <option value="live"><%= __('provider.new_modal.type.live') %></option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
-                                            <button
-                                                type="button"
-                                                id="create-provider-confirm-btn"
-                                                onclick="handleCreateProvider()"
-                                                class="button w-20 bg-theme-1 text-white"
-                                            >
-                                                <%= __('provider.new_modal.create') %>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"
-                                                data-dismiss="modal"
-                                            >
-                                                <%= __('provider.new_modal.cancel') %>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- update provider modal -->
-                                <div class="modal" id="update-provider-modal">
-                                    <div class="modal__content">
-                                        <div class="flex items-center px-5 py-5 sm:py-3 border-b border-gray-200 dark:border-dark-5">
-                                            <h2 class="font-medium text-base mr-auto" id="update-provider-action" hasanswer="false">
-                                                <%= __('provider.update_modal.title') %>
-                                            </h2>
-                                        </div>
-                                        <form id="update-provider-form">
-                                            <div class="p-5 grid grid-cols-12 gap-4 row-gap-3">
-                                                <input type="text" id="update-provider-id" style="display: none" />
-                                                <div class="col-span-12 sm:col-span-12">
-                                                    <label><%= __('provider.update_modal.provider_code') %></label>
-                                                    <input id="update-provider-code" type="text" class="input w-full border mt-2 flex-1" />
-                                                </div>
-                                                <div class="col-span-12 sm:col-span-12">
-                                                    <label><%= __('provider.update_modal.provider_name') %></label>
-                                                    <input id="update-provider-name" type="text" class="input w-full border mt-2 flex-1" />
-                                                </div>
-                                                <div class="col-span-12 sm:col-span-12">
-                                                    <label><%= __('provider.update_modal.provider_endpoint') %></label>
-                                                    <input id="update-provider-endpoint" type="text" class="input w-full border mt-2 flex-1" />
-                                                </div>
-                                                <div class="col-span-12 sm:col-span-12">
-                                                    <label><%= __('provider.update_modal.provider_type') %></label>
-                                                    <select id="update-provider-type" class="input w-full border mt-1 flex-1">
-                                                        <option value="slot"><%= __('provider.update_modal.type.slot') %></option>
-                                                        <option value="live"><%= __('provider.update_modal.type.live') %></option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <div class="px-5 py-3 text-right border-t border-gray-200 dark:border-dark-5">
-                                            <button
-                                                type="button"
-                                                id="update-provider-confirm-btn"
-                                                onclick="handleUpdateProvider()"
-                                                class="button w-20 bg-theme-1 text-white"
-                                            >
-                                                <%= __('provider.update_modal.confirm') %>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                class="button w-20 border text-gray-700 dark:border-dark-5 dark:text-gray-300 mr-1"
-                                                data-dismiss="modal"
-                                            >
-                                                <%= __('provider.update_modal.cancel') %>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -196,14 +84,11 @@
                             { title: `<%= __('provider.table.no') %>`, data: "no", width: "60px", orderable: false },
                             { title: `<%= __('provider.table.provider_code') %>`, data: "code" },
                             { title: `<%= __('provider.table.provider_name') %>`, data: "name" },
-                            { title: `<%= __('provider.table.provider_endpoint') %>`, data: "endpoint" },
                             { title: `<%= __('provider.table.created_at') %>`, data: "createdAt" },
-                            { title: `<%= __('provider.table.response_time') %>`, data: "responseTime", orderable: false },
                             { title: `<%= __('provider.table.total_game') %>`, data: "totalGames", orderable: false },
                             { title: `<%= __('provider.table.running_game') %>`, data: "runningGames", orderable: false },
                             { title: `<%= __('provider.table.checking_game') %>`, data: "checkingGames", orderable: false },
                             { title: `<%= __('provider.table.provider_status') %>`, data: "status", width: "70px", orderable: false },
-                            { title: `<%= __('provider.table.action') %>`, data: "action", width: "120px", orderable: false },
                         ],
                         ajax: {
                             url: "/api/provider",
