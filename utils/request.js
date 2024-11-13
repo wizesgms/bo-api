@@ -60,11 +60,11 @@ exports.requestForCheck = async (providerCode, providerEndpoint) => {
 
         const response = await axios.get(url);
 
-        if (response.data.status == 1) {
-            const games = response.data.games;
+        if (response.ErrorCode == 1) {
+            const games = response.ProviderGames;
 
             for (const game of games) {
-                if (game.status == 1) {
+                if (game.Status == 1) {
                     result.running++;
                 } else {
                     result.checking++;
