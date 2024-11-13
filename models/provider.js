@@ -23,6 +23,18 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
+            totalGames: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            runningGames: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            checkingGames: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
             status: {
                 type: Sequelize.INTEGER,
                 defaultValue: 1,
