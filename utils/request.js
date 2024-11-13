@@ -71,7 +71,7 @@ exports.requestForCheck = async (providerCode, providerEndpoint) => {
                 }
             }
 
-            result.total = games.length;
+            result.total = response.total;
         }
     } catch (error) {
         logger("error", "Provider | Check Provider (Game)", `Request for ${providerCode} failed. ${error.message}`);
