@@ -204,7 +204,206 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">4. <%= __('docs.list_label.reset_user_money') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#reset-balance"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="reset-balance">
+    {
+        "method": "user_withdraw_reset",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test"
+    }
+
+</code>
+
+
+
+
+
+
+<code id="sub-balance">
+    {
+        "method": "user_withdraw_reset",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "all_users": true 
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1000000,
+        },
+        "user": {
+            "user_code": "test",
+            "withdraw_amount": 5600,
+            "balance": 0
+        }
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1076850
+        },
+        "user_list": [
+            {
+                "user_code": "test",
+                "withdraw_amount": 20000,
+                "balance": 0
+            },
+            {
+                "user_code": "test2",
+                "withdraw_amount": 56850,
+                "balance": 0
+            }
+        ]
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INVALID_PARAMETER"
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">4. <%= __('docs.list_label.reset_user_money') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>:
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#reset-balance"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="reset-balance">
+    {
+        "method": "user_withdraw_reset",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test"
+    }
+
+</code>
+
+
+
+
+
+
+<code id="sub-balance">
+    {
+        "method": "user_withdraw_reset",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "all_users": true 
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1000000,
+        },
+        "user": {
+            "user_code": "test",
+            "withdraw_amount": 5600,
+            "balance": 0
+        }
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.success') %>:
+    {
+        "status": 1,
+        "msg": "SUCCESS",
+        "agent": {
+            "agent_code": "<%= session.auth.agentCode %>",
+            "balance": 1076850
+        },
+        "user_list": [
+            {
+                "user_code": "test",
+                "withdraw_amount": 20000,
+                "balance": 0
+            },
+            {
+                "user_code": "test2",
+                "withdraw_amount": 56850,
+                "balance": 0
+            }
+        ]
+    }
+</code>
+<code>
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "msg": "INVALID_PARAMETER"
+    }
+
+</code>
+                                                    </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
                                             <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">5. <%= __('docs.list_label.run_game') %> </a>
                                             <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
@@ -312,6 +511,19 @@
         "agent_code": "<%= session.auth.agentCode %>",
         "agent_token": "<%= session.auth.token %>",
         "user_code": "test"
+    }
+
+</code>
+
+
+
+
+<code id="agent-user-info">
+    {
+        "method": "money_info",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "all_users": true 
     }
 
 </code>
@@ -467,7 +679,7 @@
         "agent_code": "<%= session.auth.agentCode %>",
         "agent_token": "<%= session.auth.token %>",
         "game_type": "SeamlessGame",
-        "provider_code": "3"
+        "provider_code": "170"
     }
 
 </code>
@@ -513,6 +725,104 @@
 
 </code>
                                                         </pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
+                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">9. <%= __('docs.list_label.bet_history') %> </a>
+                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
+                                                <div class="grid grid-cols-12 gap-6">
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.request_example') %>: 
+                                                        <button
+                                                            type="button"
+                                                            data-clipboard-target="#get-slot-game-history"
+                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
+                                                        >
+                                                            <%= __('docs.button.copy') %>
+                                                        </button>
+                                                        <br>
+                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
+                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
+                                                        <pre>
+<code id="get-slot-game-history">
+    {
+        "method": "get_game_log",
+        "agent_code": "<%= session.auth.agentCode %>",
+        "agent_token": "<%= session.auth.token %>",
+        "user_code": "test",
+        "game_type": "slot",
+        "start": "2022-09-29 00:00:00",
+        "end": "2022-09-30 23:59:00",
+        "page": 0,
+        "perPage": 1000
+    }
+
+
+</code>
+
+<code>
+    <%= __('docs.ref_panel.1') %>
+
+    - "debit" // <%= __('docs.ref_panel.2') %>
+        "txn_type": "debit"
+        "bet": 2000   // <%= __('docs.ref_panel.5') %>
+        "win": 0      // <%= __('docs.ref_panel.4') %>
+        "txn_id": "64a83..."
+
+    - "credit" // <%= __('docs.ref_panel.3') %>
+        "txn_type": "credit"
+        "bet": 0     // <%= __('docs.ref_panel.4') %>
+        "win": 1500  // <%= __('docs.ref_panel.5') %>
+        "txn_id": "64a83..."
+
+    - "debit_credit"// <%= __('docs.ref_panel.6') %>
+        "txn_type": "debit_credit"
+        "bet": 2000  // <%= __('docs.ref_panel.5') %>
+        "win": 1500  // <%= __('docs.ref_panel.5') %>
+
+</code>
+                                                        </pre>
+
+                                                    </div>
+
+                                                    <div class="col-span-12 sm:col-span-6">
+                                                        <%= __('docs.list_label.response_example') %>:
+                                                        <pre>
+
+<code>
+    - <%= __('docs.list_label.success') %>
+    {
+        "status": 1,
+        "msg": 'SUCCESS',
+        "data": [
+            {
+                "id": 1,
+                "sessionId": 231059463,
+                "bet": "0.2",
+                "win": "0.06",
+                "userCode": "test1112",
+                "tradeId": "M7_22912006_1_045319",
+                "betInfo": {"lines":20,"bet":"0.01","level":3},
+                "gameId": 7915,
+                "matrix": {"sasb":{"sa":["13","5","16","13","3"],"sb":["3","4","13","11","7"]},"1":{"1":"10","2":"8","3":"13"},"2":{"1":"4","2":"8","3":"10"},"3":{"1":"10","2":"4","3":"12"},"4":{"1":"10","2":"13","3":"7"},"5":{"1":"8","2":"7","3":"7"},"reelSet":2},
+                "WinLines": [{"line":14,"symbol":"10","count":3,"side":"left","cash":0.06,"elements":[[1,1],[2,3],[3,1]],"xWin":1}],
+                "createdAt": "2024-11-16 11:53:19",
+                "updatedAt": "2024-11-16 11:53:19"
+            },
+            ...
+        ]
+    }
+
+    - <%= __('docs.list_label.failure') %>:
+    {
+        "status": 0,
+        "error": "INVALID_PARAMETER"
+    }
+
+</code>
+                                                    </pre>
                                                     </div>
                                                 </div>
                                             </div>
@@ -732,7 +1042,7 @@
         "agent_code": "<%= session.auth.agentCode %>",
         "agent_token": "<%= session.auth.token %>",
         "game_type": "SeamlessGame",
-        "provider_code": "3"
+        "provider_code": "170"
     }
 
 </code>
