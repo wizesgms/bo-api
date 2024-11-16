@@ -705,7 +705,6 @@
         "agent_code": "<%= session.auth.agentCode %>",
         "agent_token": "<%= session.auth.token %>",
         "user_code": "test",
-        "game_type": "slot",
         "start": "2022-09-29 00:00:00",
         "end": "2022-09-30 23:59:00",
         "page": 0,
@@ -748,21 +747,23 @@
     - <%= __('docs.list_label.success') %>
     {
         "status": 1,
-        "msg": 'SUCCESS',
+        "total_count": 112,
         "data": [
             {
-                "id": 1,
-                "sessionId": 231059463,
-                "bet": "0.2",
-                "win": "0.06",
-                "userCode": "test1112",
-                "tradeId": "M7_22912006_1_045319",
-                "betInfo": {"lines":20,"bet":"0.01","level":3},
-                "gameId": 7915,
-                "matrix": {"sasb":{"sa":["13","5","16","13","3"],"sb":["3","4","13","11","7"]},"1":{"1":"10","2":"8","3":"13"},"2":{"1":"4","2":"8","3":"10"},"3":{"1":"10","2":"4","3":"12"},"4":{"1":"10","2":"13","3":"7"},"5":{"1":"8","2":"7","3":"7"},"reelSet":2},
-                "WinLines": [{"line":14,"symbol":"10","count":3,"side":"left","cash":0.06,"elements":[[1,1],[2,3],[3,1]],"xWin":1}],
-                "createdAt": "2024-11-16 11:53:19",
-                "updatedAt": "2024-11-16 11:53:19"
+                "history_id": 245,
+                "agent_code": "<%= session.auth.agentCode %>",
+                "user_code": "test",
+                "game_code": "15255",
+                "type": "bet",
+                "bet_money": 2000,
+                "win_money": 0,
+                "txn_id": "64a83f2fc597acc9004eec52c3f84c30",
+                "txn_type": "bet",
+                "user_start_balance": 1741708,
+                "user_end_balance": 1739708,
+                "agent_start_balance": 98981676,
+                "agent_end_balance": 98981676,
+                "created_at": "2022-09-29T12:50:42.000Z"
             },
             ...
         ]
