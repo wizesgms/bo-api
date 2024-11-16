@@ -594,66 +594,6 @@
                                             </div>
                                         </div>
                                         <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
-                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">7. <%= __('docs.list_label.provider') %> </a>
-                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
-                                                <div class="grid grid-cols-12 gap-6">
-                                                    <div class="col-span-12 sm:col-span-6">
-                                                        <%= __('docs.list_label.request_example') %>:
-                                                        <button
-                                                            type="button"
-                                                            data-clipboard-target="#slot-provider-list"
-                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
-                                                        >
-                                                            <%= __('docs.button.copy') %>
-                                                        </button>
-                                                        <br>
-                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
-                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
-                                                        <pre>
-<code id="slot-provider-list">
-    {
-        "method": "provider_list",
-        "agent_code": "<%= session.auth.agentCode %>",
-        "agent_token": "<%= session.auth.token %>",
-    }
-
-</code>
-
-                                                        </pre>
-                                                    </div>
-
-                                                    <div class="col-span-12 sm:col-span-6">
-                                                        <%= __('docs.list_label.response_example') %>:
-                                                        <pre>
-
-<code>
-    - <%= __('docs.list_label.success') %>:
-    {
-        "status": 1,
-        "msg": "SUCCESS",
-        "providers": [
-            {
-                "code": "170",
-                "name": "Pragmatic Play",
-                "game_type": 1
-            },
-            ...
-        ]
-    }
-
-    - <%= __('docs.list_label.failure') %>:
-    {
-        "status": 0,
-        "msg": "INTERNAL_ERROR"
-    }
-
-</code>
-                                                        </pre>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 transfer_api">
                                             <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">
                                                 8. <%= __('docs.list_label.game_list') %>
                                             </a>
