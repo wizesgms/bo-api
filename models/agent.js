@@ -154,7 +154,7 @@ module.exports = (sequelize, Sequelize) => {
                 allowNull: false,
                 defaultValue: 0,
             },
-            call: {
+            actshow: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 defaultValue: 1,
