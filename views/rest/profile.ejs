@@ -134,6 +134,12 @@
                                                         <input type="text" class="input w-full border mt-2" id="agent-new-password" />
                                                     </div>
                                                 </div>
+<div class="col-span-12">
+                                                    <div class="mt-3">
+                                                        <label>Callback URL</label>
+                                                        <input type="text" class="input w-full border mt-2" id="callback_url" />
+                                                    </div>
+                                                </div>
                                                 <div class="col-span-12">
                                                     <div class="mt-3">
                                                         <label><%= __('profile.change.memo') %></label>
@@ -225,6 +231,7 @@
                                 $("#api-type").html(api_method[agentInfo.apiType]);
                                 $("#agent-new-password").val(agentInfo.password);
                                 $("#agent-new-memo").html(agentInfo.memo);
+$("#callback_url").val(agentInfo.siteEndPoint);
                             }
                         }
                     },
@@ -238,6 +245,7 @@
                 const requestData = {
                     id: $("#user_id").val(),
                     password: $("#agent-new-password").val(),
+siteEndPoint: $("#callback_url").val(),
                     memo: $("#agent-new-memo").val(),
                 };
 
