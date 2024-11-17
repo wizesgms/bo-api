@@ -154,6 +154,11 @@ module.exports = (sequelize, Sequelize) => {
                 allowNull: false,
                 defaultValue: 0,
             },
+            call: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                defaultValue: 1,
+            },
         },
         {
             tableName: "agents",
