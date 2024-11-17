@@ -144,6 +144,13 @@
                                                     <option value="2"><%= __('agents.new_modal.agent_type.run') %></option>
                                                 </select>
                                             </div>
+                                            <div class="col-span-6">
+                                                <label>Allow Manage Call And Rtp</label>
+                                                <select class="input w-full border mt-1 flex-1" id="new-agent-call">
+                                                    <option value="0">Forbid</option>
+                                                    <option value="1">Allow</option>
+                                                </select>
+                                            </div>
                                             <div class="col-span-6" id="new-agent-api-wrapper">
                                                 <label><%= __('agents.new_modal.api_type') %></label>
                                                 <select class="input w-full border mt-1 flex-1" id="new-agent-api">
@@ -290,6 +297,13 @@
                                                     <option value="1"><%= __('agents.new_modal.agent_type.distribution') %></option>
                                                     <option value="2"><%= __('agents.new_modal.agent_type.run') %></option>
                                                     <option value="3"><%= __('agents.new_modal.agent_type.parallel') %></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-span-6">
+                                                <label>Allow Manage Call And Rtp</label>
+                                                <select class="input w-full border mt-1 flex-1" id="update-agent-call">
+                                                    <option value="0">Forbid</option>
+                                                    <option value="1">Allow</option>
                                                 </select>
                                             </div>
                                             <div class="col-span-6" id="update-agent-api-wrapper" style="display: none">
@@ -923,6 +937,7 @@
                             $("#update-agent-block-opposite-bet").val(agent.blockOppositeBet);
                             $("#update-agent-block-red-envelope").val(agent.blockRedEnvelope);
                             $("#update-agent-bet-limit-skin").val(agent.betLimitSkin);
+                            $("#update-agent-call").val(agent.call);
 
                             if (agent.agentType == 1) {
                                 $("#update-agent-api-wrapper").hide();
@@ -1179,6 +1194,7 @@
                     blockOppositeBet: $("#new-agent-block-opposite-bet").val(),
                     blockRedEnvelope: $("#new-agent-block-red-envelope").val(),
                     betLimitSkin: $("#new-agent-bet-limit-skin").val(),
+                    call: $("#new-agent-call").val(),
                 };
 
                 if (sessionAgentRole == 1) {
@@ -1242,6 +1258,7 @@
                     blockOppositeBet: $("#update-agent-block-opposite-bet").val(),
                     blockRedEnvelope: $("#update-agent-block-red-envelope").val(),
                     betLimitSkin: $("#update-agent-bet-limit-skin").val(),
+                    call: $("#update-agent-call").val(),
                 };
 
                 const zeroCount = $("#update-agent-zero-count").val();
