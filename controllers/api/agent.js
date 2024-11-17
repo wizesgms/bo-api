@@ -7,7 +7,7 @@ const isEmpty = require("../../utils/isEmpty");
 
 exports.createAgent = async (req, res) => {
     try {
-        const { parentId, agentCode, agentName, agentType, password, percent, currency, curShow, memo, apiType, siteEndPoint, ipAddress, betEdited, minBet, maxBet, zeroSetting, adminMemo, blockOppositeBet, blockRedEnvelope, betLimitSkin, call } = req.body;
+        const { parentId, agentCode, agentName, agentType, password, percent, currency, curShow, memo, apiType, siteEndPoint, ipAddress, betEdited, minBet, maxBet, zeroSetting, adminMemo, blockOppositeBet, blockRedEnvelope, betLimitSkin, actshow } = req.body;
 
         const existAgent = await Agent.findOne({ where: { agentCode } });
         if (existAgent) {
@@ -65,7 +65,7 @@ exports.createAgent = async (req, res) => {
             blockOppositeBet,
             blockRedEnvelope,
             betLimitSkin,
-            call
+            actshow
         });
 
         return res.json({ status: 1 });
@@ -82,7 +82,7 @@ exports.createAgent = async (req, res) => {
 exports.updateAgent = async (req, res) => {
     try {
         const { id } = req.params;
-        const { agentName, password, agentType, apiType, percent, ipAddress, memo, status, siteEndPoint, curShow, betEdited, minBet, maxBet, zeroSetting, rtp, adminMemo, blockOppositeBet, blockRedEnvelope, betLimitSkin, call } = req.body;
+        const { agentName, password, agentType, apiType, percent, ipAddress, memo, status, siteEndPoint, curShow, betEdited, minBet, maxBet, zeroSetting, rtp, adminMemo, blockOppositeBet, blockRedEnvelope, betLimitSkin, actshow } = req.body;
 
         const agent = await Agent.findByPk(id);
         if (!agent) {
@@ -112,7 +112,7 @@ exports.updateAgent = async (req, res) => {
         if (!isEmpty(blockOppositeBet)) updateData.blockOppositeBet = blockOppositeBet;
         if (!isEmpty(blockRedEnvelope)) updateData.blockRedEnvelope = blockRedEnvelope;
         if (!isEmpty(betLimitSkin)) updateData.betLimitSkin = betLimitSkin;
-        if (!isEmpty(call)) updateData.call = call;
+        if (!isEmpty(actshow)) updateData.actshow = actshow;
 
         if (agent.zeroSetting != zeroSetting) {
             updateData.curIndex = 0;
