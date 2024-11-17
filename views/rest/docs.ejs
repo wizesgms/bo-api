@@ -1087,34 +1087,11 @@
         "agent_balance": 10000000,
         "user_code": "test",
         "user_balance": 99200,
-        "game_type": "slot",
-        "slot": {
-            "provider_code": "BOOONGO",
+        "data": {
             "game_code": "sun_of_egypt",
             "type": "BASE",
             "bet_money": 1000,
             "win_money": 200,
-            "txn_id": "MVGKE8FJE3838EFN378DF",
-            "txn_type": "debit_credit" // or "debit" or "credit"
-        }
-    }
-
-</code>
-<code id="transaction">
-    {
-        "method": "transaction",
-        "agent_code": "<%= session.auth.agentCode %>",
-        "agent_secret": "<%= session.auth.secretKey %>",
-        "agent_balance": 10000000,
-        "user_code": "test",
-        "user_balance": 102000,
-        "game_type": "live",
-        "live": {
-            "provider_code": "EVOLUTION",
-            "game_code": "100",
-            "type": "lucky7",
-            "bet_money": 2000,
-            "win_money": 4000,
             "txn_id": "MVGKE8FJE3838EFN378DF",
             "txn_type": "debit_credit" // or "debit" or "credit"
         }
