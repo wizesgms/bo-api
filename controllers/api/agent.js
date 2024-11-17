@@ -7,7 +7,7 @@ const isEmpty = require("../../utils/isEmpty");
 
 exports.createAgent = async (req, res) => {
     try {
-        const { parentId, agentCode, agentName, agentType, password, percent, currency, curShow, memo, apiType, siteEndPoint, ipAddress, betEdited, minBet, maxBet, zeroSetting, adminMemo, blockOppositeBet, blockRedEnvelope, betLimitSkin } = req.body;
+        const { parentId, agentCode, agentName, agentType, password, percent, currency, curShow, memo, apiType, siteEndPoint, ipAddress, betEdited, minBet, maxBet, zeroSetting, adminMemo, blockOppositeBet, blockRedEnvelope, betLimitSkin, call } = req.body;
 
         const existAgent = await Agent.findOne({ where: { agentCode } });
         if (existAgent) {
