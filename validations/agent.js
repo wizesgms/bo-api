@@ -22,7 +22,7 @@ const schemas = {
         blockOppositeBet: Joi.number().integer().min(0),
         blockRedEnvelope: Joi.number().integer().min(0),
         betLimitSkin: Joi.string().default('SKIN1'),
-        actshow: Joi.number().integer().min(0),
+        actshow: Joi.number().required(),
     }),
 
     update: Joi.object({
