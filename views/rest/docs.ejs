@@ -910,66 +910,6 @@
                                             </div>
                                         </div>
                                         <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 seamless_api">
-                                            <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">3. <%= __('docs.list_label.provider') %> </a>
-                                            <div class="accordion__pane__content mt-3 text-gray-700 leading-relaxed">
-                                                <div class="grid grid-cols-12 gap-6">
-                                                    <div class="col-span-12 sm:col-span-6">
-                                                        <%= __('docs.list_label.request_example') %>:
-                                                        <button
-                                                            type="button"
-                                                            data-clipboard-target="#slot-provider-list-seamless"
-                                                            class="btn button button--sm bg-theme-1 text-white ml-3"
-                                                        >
-                                                            <%= __('docs.button.copy') %>
-                                                        </button>
-                                                        <br>
-                                                        <button type="button" class="btn button button--sm1 bg-theme-1 text-white mr-3">POST</button> 
-                                                        <a class="aas_endpoint"><%= process.env.AAS_ENDPOINT %></a>
-                                                        <pre>
-<code id="slot-provider-list-seamless">
-    {
-        "method": "provider_list",
-        "agent_code": "<%= session.auth.agentCode %>",
-        "agent_token": "<%= session.auth.token %>",
-    }
-
-</code>
-
-                                                        </pre>
-                                                    </div>
-
-                                                    <div class="col-span-12 sm:col-span-6">
-                                                        <%= __('docs.list_label.response_example') %>:
-                                                        <pre>
-
-<code>
-    - <%= __('docs.list_label.success') %>:
-    {
-        "status": 1,
-        "msg": "SUCCESS",
-        "providers": [
-            {
-                "code": "170",
-                "name": "Pragmatic Play",
-                "game_type": 1
-            },
-            ...
-        ]
-    }
-
-    - <%= __('docs.list_label.failure') %>:
-    {
-        "status": 0,
-        "msg": "INTERNAL_ERROR"
-    }
-
-</code>
-                                                        </pre>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="accordion__pane border api_doc dark:border-dark-5 p-2 mt-1 seamless_api">
                                             <a href="javascript:;" class="accordion__pane__toggle font-medium block dark:text-gray-700">
                                                 4. <%= __('docs.list_label.game_list') %>
                                             </a>
@@ -992,9 +932,7 @@
     {
         "method": "game_list",
         "agent_code": "<%= session.auth.agentCode %>",
-        "agent_token": "<%= session.auth.token %>",
-        "game_type": "SeamlessGame",
-        "provider_code": "170"
+        "agent_token": "<%= session.auth.token %>"
     }
 
 </code>
@@ -1008,28 +946,45 @@
 <code>
     - <%= __('docs.list_label.success') %>:
     {
-        "ProviderGames": [
-        {
-            "Provider": "PragmaticPlay",
-            "GameCode": "517",
-            "GameName": "Aztec Treasure Hunt",
-            "GameType": "SeamlessGame",
-            "ProviderCode": "3",
-            "GameImage": "https://cdn-test.cdn568.net/PragmaticPlay/517/3_517_AztecTreasureHunt.png?v=4",
-            "Status": "1"
-          },
-          {
-            "Provider": "PragmaticPlay",
-            "GameCode": "518",
-            "GameName": "Dragon Gold 88",
-            "GameType": "SeamlessGame",
-            "ProviderCode": "3",
-            "GameImage": "https://cdn-test.cdn568.net/PragmaticPlay/518/3_518_DragonGold88.png?v=4",
-            "Status": "1"
-          },
-        ],
-        "ErrorCode": 0,
-        "ErrorMessage": null
+        "status": "success",
+        "microtime": 0.07460594177246094,
+        "dateTime": "2024-11-16 04:38:10",
+        "error": "",
+        "content": {
+            "gameLabels": [
+                "booming_asia"
+            ],
+            "gameTitles": [
+                "booming",
+            ],
+            "gameList": [
+                {
+                    "id": "15252",
+                    "name": "Ronaldinho Scores - Shoot & Win!",
+                    "name_cn": "",
+                    "name_kr": "",
+                    "img": "https://static.cdneu-stat.com/resources/sitepicstbs/booming_asia/game_img_2/RonaldinhoScoresShootWin.jpg",
+                    "label": "booming_asia",
+                    "device": "2",
+                    "title": "booming",
+                    "categories": "slots",
+                    "flash": "0",
+                    "vertical": "0",
+                    "bm": "0",
+                    "demo": "1",
+                    "localhost": "0",
+                    "rewriterule": "0",
+                    "lines": "0",
+                    "width": "1",
+                    "wager": "0",
+                    "bonus": "0",
+                    "exitButton": "1",
+                    "disableReload": "0",
+                    "menu": "",
+                    "system_name2": ""
+                }
+            ]
+        }
     }
 
     - <%= __('docs.list_label.failure') %>:
