@@ -937,7 +937,7 @@
                             $("#update-agent-block-opposite-bet").val(agent.blockOppositeBet);
                             $("#update-agent-block-red-envelope").val(agent.blockRedEnvelope);
                             $("#update-agent-bet-limit-skin").val(agent.betLimitSkin);
-                            $("#update-agent-call").val(agent.call);
+                            $("#update-agent-call").val(agent.actshow);
 
                             if (agent.agentType == 1) {
                                 $("#update-agent-api-wrapper").hide();
@@ -1194,7 +1194,7 @@
                     blockOppositeBet: $("#new-agent-block-opposite-bet").val(),
                     blockRedEnvelope: $("#new-agent-block-red-envelope").val(),
                     betLimitSkin: $("#new-agent-bet-limit-skin").val(),
-                    call: $("#new-agent-call").val(),
+                    actshow: $("#new-agent-call").val(),
                 };
 
                 if (sessionAgentRole == 1) {
@@ -1258,7 +1258,7 @@
                     blockOppositeBet: $("#update-agent-block-opposite-bet").val(),
                     blockRedEnvelope: $("#update-agent-block-red-envelope").val(),
                     betLimitSkin: $("#update-agent-bet-limit-skin").val(),
-                    call: $("#update-agent-call").val(),
+                    actshow: $("#update-agent-call").val(),
                 };
 
                 const zeroCount = $("#update-agent-zero-count").val();
