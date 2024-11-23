@@ -15,12 +15,12 @@ router.get("/", (req, res) => {
 
     if (req.session.auth) {
         if (req.session.auth.role == 100) {
-            redirectUrl = "https://t.me/api_admin001";
+            redirectUrl = "/app/agents";
         } else {
-            redirectUrl = "https://t.me/api_admin001";
+            redirectUrl = "/app/dashboard";
         }
     } else {
-        redirectUrl = "https://t.me/api_admin001";
+        redirectUrl = "/app/login";
     }
 
     return res.redirect(redirectUrl);
