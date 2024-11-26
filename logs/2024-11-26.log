@@ -9,3 +9,15 @@
 2024-11-26 22:46:44 error: [ Provider | Check Provider (Game) ]: Request for 0 failed. Request failed with status code 404
 2024-11-26 22:46:45 error: [ Provider | Check Provider (Status) ]: Request for 10 failed. certificate has expired
 2024-11-26 22:46:45 error: [ Provider | Check Provider (Game) ]: Request for 10 failed. Request failed with status code 404
+2024-11-26 23:42:56 info: [ Database ]: Database (api_backoffice) creating...
+2024-11-26 23:42:56 warn: [ Database ]: Database already exists. (api_backoffice)
+2024-11-26 23:42:56 info: [ Database ]: Updating database...
+2024-11-26 23:42:56 info: [ Loaded ]: Database config
+2024-11-26 23:42:56 info: [ Loaded ]: Express config
+2024-11-26 23:42:56 info: [ Server ]: Server is started on 5006 port
+2024-11-26 23:44:06 info: [ Database ]: Database (api_backoffice) creating...
+2024-11-26 23:44:06 warn: [ Database ]: Database already exists. (api_backoffice)
+2024-11-26 23:44:06 info: [ Database ]: Updating database...
+2024-11-26 23:44:06 info: [ Loaded ]: Database config
+2024-11-26 23:44:06 info: [ Loaded ]: Express config
+2024-11-26 23:44:06 info: [ Server ]: Server is started on 5006 port

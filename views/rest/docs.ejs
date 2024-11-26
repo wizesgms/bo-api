@@ -615,7 +615,8 @@
     {
         "method": "game_list",
         "agent_code": "<%= session.auth.agentCode %>",
-        "agent_token": "<%= session.auth.token %>"
+        "agent_token": "<%= session.auth.token %>",
+        "provider_code": "PRAGMATIC"
     }
 
 </code>
@@ -629,51 +630,28 @@
 <code>
     - <%= __('docs.list_label.success') %>:
     {
-        "status": "success",
-        "microtime": 0.07460594177246094,
-        "dateTime": "2024-11-16 04:38:10",
-        "error": "",
-        "content": {
-            "gameLabels": [
-                "booming_asia"
-            ],
-            "gameTitles": [
-                "booming",
-            ],
-            "gameList": [
-                {
-                    "id": "15252",
-                    "name": "Ronaldinho Scores - Shoot & Win!",
-                    "name_cn": "",
-                    "name_kr": "",
-                    "img": "https://static.cdneu-stat.com/resources/sitepicstbs/booming_asia/game_img_2/RonaldinhoScoresShootWin.jpg",
-                    "label": "booming_asia",
-                    "device": "2",
-                    "title": "booming",
-                    "categories": "slots",
-                    "flash": "0",
-                    "vertical": "0",
-                    "bm": "0",
-                    "demo": "1",
-                    "localhost": "0",
-                    "rewriterule": "0",
-                    "lines": "0",
-                    "width": "1",
-                    "wager": "0",
-                    "bonus": "0",
-                    "exitButton": "1",
-                    "disableReload": "0",
-                    "menu": "",
-                    "system_name2": ""
-                }
-            ]
-        }
+        "status": 1,
+        "msg": "SUCCESS",
+        "games": [
+            {
+                "game_code": "vs20doghouse",
+                "game_name": "The Dog House",
+                "banner": "https://.../vs20doghouse.png",
+                "status": 1 // open
+            },
+            {
+                "game_code": "vs243mwarrior",
+                "game_name": "Monkey Warrior",
+                "banner": "https://.../vs243mwarrior.png",
+                "status": 0 // maintenancing
+            }
+        ]
     }
 
     - <%= __('docs.list_label.failure') %>:
     {
-        "ErrorCode": 1,
-        "ErrorMessage": "INTERNAL_ERROR"
+        "status": 1,
+        "msg": "INTERNAL_ERROR"
     }
 
 </code>
@@ -932,7 +910,8 @@
     {
         "method": "game_list",
         "agent_code": "<%= session.auth.agentCode %>",
-        "agent_token": "<%= session.auth.token %>"
+        "agent_token": "<%= session.auth.token %>",
+        "provider_code": "PRAGMATIC"
     }
 
 </code>
@@ -946,51 +925,28 @@
 <code>
     - <%= __('docs.list_label.success') %>:
     {
-        "status": "success",
-        "microtime": 0.07460594177246094,
-        "dateTime": "2024-11-16 04:38:10",
-        "error": "",
-        "content": {
-            "gameLabels": [
-                "booming_asia"
-            ],
-            "gameTitles": [
-                "booming",
-            ],
-            "gameList": [
-                {
-                    "id": "15252",
-                    "name": "Ronaldinho Scores - Shoot & Win!",
-                    "name_cn": "",
-                    "name_kr": "",
-                    "img": "https://static.cdneu-stat.com/resources/sitepicstbs/booming_asia/game_img_2/RonaldinhoScoresShootWin.jpg",
-                    "label": "booming_asia",
-                    "device": "2",
-                    "title": "booming",
-                    "categories": "slots",
-                    "flash": "0",
-                    "vertical": "0",
-                    "bm": "0",
-                    "demo": "1",
-                    "localhost": "0",
-                    "rewriterule": "0",
-                    "lines": "0",
-                    "width": "1",
-                    "wager": "0",
-                    "bonus": "0",
-                    "exitButton": "1",
-                    "disableReload": "0",
-                    "menu": "",
-                    "system_name2": ""
-                }
-            ]
-        }
+        "status": 1,
+        "msg": "SUCCESS",
+        "games": [
+            {
+                "game_code": "vs20doghouse",
+                "game_name": "The Dog House",
+                "banner": "https://.../vs20doghouse.png",
+                "status": 1 // open
+            },
+            {
+                "game_code": "vs243mwarrior",
+                "game_name": "Monkey Warrior",
+                "banner": "https://.../vs243mwarrior.png",
+                "status": 0 // maintenancing
+            }
+        ]
     }
 
     - <%= __('docs.list_label.failure') %>:
     {
-        "ErrorCode": 1,
-        "ErrorMessage": "INTERNAL_ERROR"
+        "status": 1,
+        "msg": "INTERNAL_ERROR"
     }
 
 </code>
